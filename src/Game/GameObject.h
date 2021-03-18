@@ -13,11 +13,12 @@ class GameObject{
         float rotation;
         glm::vec2 size;
         glm::vec3 color;
+        glm::vec2 velocity;
         Texture2D sprite;
 
     public:
         GameObject() = default;
-        GameObject(glm::vec2 position,float rotation,glm::vec2 size,glm::vec3 color,Texture2D sprite);
+        GameObject(glm::vec2 position,float rotation,glm::vec2 size,glm::vec3 color,glm::vec2 velocity,Texture2D sprite);
 
         void render(Shader& shader);
 

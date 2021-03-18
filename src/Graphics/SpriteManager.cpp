@@ -10,7 +10,7 @@ void SpriteManager::loadSprite(const char* filename,std::string name,bool flip){
 }
 
 Texture2D& SpriteManager::getSprite(std::string name){
-    return sprites.at(name);
+    return sprites[name];
 }
 
 void SpriteManager::clearSprite(std::string name){

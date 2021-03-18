@@ -29,6 +29,9 @@ void framebufferSizeCallback(GLFWwindow* window,int witdh, int height);
 
 Level level;
 
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
 int main(){
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -54,6 +57,8 @@ int main(){
     }
 
     glViewport(0,0,800, 600); //Pone el rango de dibujo para OpenGl, esto puede ser menor que el tamaño de la ventana de GLFW
+    glEnable(GL_BLEND); //Activa y configura el alpha blending
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //Pone los callbacks necesarios
     glfwSetFramebufferSizeCallback(window,framebufferSizeCallback);
@@ -82,17 +87,26 @@ int main(){
     SpriteManager::loadSprite("assets/textures/block_solid.png","block_solid",false);
     SpriteManager::loadSprite("assets/textures/block.png","block",false);
     SpriteManager::loadSprite("assets/textures/background.jpg","background",false);
-    
+    SpriteManager::loadSprite("assets/textures/paddle.png","paddle",false);
+
     // ================== Objetos ================================
     level.load("assets/levels/standar.txt",800,300);
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); wireframe mode
     //Bucle de dibujo (render loop)
     while(!glfwWindowShouldClose(window)){ /*Corre mientras no se le diga a GLFW que debe cerrar */
+        //Calcular el deltaTime
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+        
         //Entrada
         if(Keyboard::key(GLFW_KEY_ESCAPE) == GLFW_PRESS){
             glfwSetWindowShouldClose(window,true);
         }
+
+        //Update
+        level.update(deltaTime);
      
         //Comando de render aqui
         glClearColor(0.0f,0.0f,0.0f,1.0f);

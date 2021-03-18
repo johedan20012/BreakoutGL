@@ -27,14 +27,16 @@ void Level::load(const char* filename,unsigned int levelWidth,unsigned int level
     file.close();
 }
 
-void Level::update(){
-
+void Level::update(float deltaTime){
+    player.update(deltaTime);
 }
 
 void Level::render(Shader& shader){
     for(int  i = 0; i<bricks.size(); i++){
         bricks[i].render(shader);
     }
+
+    player.render(shader);
 }
 
 bool Level::isCompleted(){
@@ -79,4 +81,7 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
             } //else no se agrega un ladrillo en esa posicion
         }
     }
+
+    //Iniciar jugador
+    player = Player(SpriteManager::getSprite("paddle"));
 }
