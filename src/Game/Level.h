@@ -7,6 +7,7 @@
 
 #include "Brick.h"
 #include "Player.h"
+#include "Ball.h"
 #include "../Graphics/SpriteManager.h"
 
 class Level{
@@ -14,6 +15,8 @@ class Level{
         std::vector<Brick> bricks;
         
         Player player;
+
+        Ball ball;
 
     public:
         Level();
@@ -27,6 +30,8 @@ class Level{
         bool isCompleted();
     
     private:
+        void handleInput();
+
         void init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth,unsigned int levelHeight);
 };
 

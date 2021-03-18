@@ -88,6 +88,7 @@ int main(){
     SpriteManager::loadSprite("assets/textures/block.png","block",false);
     SpriteManager::loadSprite("assets/textures/background.jpg","background",false);
     SpriteManager::loadSprite("assets/textures/paddle.png","paddle",false);
+    SpriteManager::loadSprite("assets/textures/awesomeface.png","ball",false);
 
     // ================== Objetos ================================
     level.load("assets/levels/standar.txt",800,300);
