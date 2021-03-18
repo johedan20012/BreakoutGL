@@ -56,7 +56,7 @@ class ArrayObject{
     private:
         unsigned int arrayId;
 
-        std::map<const char*,BufferObject> buffers;
+        std::map<std::string,BufferObject> buffers;
     public:
         ArrayObject(){}
 

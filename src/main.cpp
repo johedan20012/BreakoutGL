@@ -16,6 +16,9 @@
 // juego
 #include "Game/Level.h"
 
+// Graficos
+#include "Graphics/SpriteManager.h"
+
 // I/O
 #include "IO/Keyboard.h"
 #include "IO/Mouse.h"
@@ -76,17 +79,12 @@ int main(){
     shader.setFloatMat4("projection",projection);
 
     // =================== Texturas ==============================
-    Texture2D solidBrickText,regularBrickText,background;
-    solidBrickText.generate();
-    solidBrickText.loadFile("assets/textures/block_solid.png",false);
-    regularBrickText.generate();
-    regularBrickText.loadFile("assets/textures/block.png",false);
-    background.generate();
-    background.loadFile("assets/textures/background.jpg",false);
-
-
+    SpriteManager::loadSprite("assets/textures/block_solid.png","block_solid",false);
+    SpriteManager::loadSprite("assets/textures/block.png","block",false);
+    SpriteManager::loadSprite("assets/textures/background.jpg","background",false);
+    
     // ================== Objetos ================================
-    level.load("assets/levels/standar.txt",800,300,regularBrickText,solidBrickText);
+    level.load("assets/levels/standar.txt",800,300);
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); wireframe mode
     //Bucle de dibujo (render loop)
@@ -95,13 +93,13 @@ int main(){
         if(Keyboard::key(GLFW_KEY_ESCAPE) == GLFW_PRESS){
             glfwSetWindowShouldClose(window,true);
         }
-
+     
         //Comando de render aqui
         glClearColor(0.0f,0.0f,0.0f,1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         //Render
-        SpriteRenderer::drawSprite(background,shader,glm::vec2(0.0f,0.0f),glm::vec2(800.0f,600.0f),0,glm::vec3(1.0f));
+        SpriteRenderer::drawSprite(SpriteManager::getSprite("background"),shader,glm::vec2(0.0f,0.0f),glm::vec2(800.0f,600.0f),0,glm::vec3(1.0f));
         level.render(shader);
         
         
@@ -115,8 +113,7 @@ int main(){
 
     SpriteRenderer::cleanup();
 
-    solidBrickText.cleanup();
-    regularBrickText.cleanup();
+    SpriteManager::cleanup();
 
     glfwTerminate();
     return 0;

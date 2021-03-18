@@ -7,12 +7,14 @@
 
 class SpriteManager{
     private:
-        static std::map<const char*,Texture2D> textures;
+        static std::map<std::string,Texture2D> sprites;
 
     public:
-        static void loadTexture(const char* filename,const char* id, bool flip = true);
+        static void loadSprite(const char* filename,std::string name, bool flip = true);
 
-        static void clearTexture(const char* id);
+        static Texture2D& getSprite(std::string name);
+
+        static void clearSprite(std::string name);
 
         static void cleanup();
 

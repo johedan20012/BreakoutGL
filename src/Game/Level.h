@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "Brick.h"
+#include "../Graphics/SpriteManager.h"
 
 class Level{
     private:
@@ -14,7 +15,7 @@ class Level{
     public:
         Level();
 
-        void load(const char* file,unsigned int levelWidth,unsigned int levelHeight,Texture2D& brick,Texture2D& solidBrick);
+        void load(const char* file,unsigned int levelWidth,unsigned int levelHeight);
 
         void update();
 
@@ -23,7 +24,7 @@ class Level{
         bool isCompleted();
     
     private:
-        void init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth,unsigned int levelHeight,Texture2D& brick,Texture2D& solidBrick);
+        void init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth,unsigned int levelHeight);
 };
 
 #endif
