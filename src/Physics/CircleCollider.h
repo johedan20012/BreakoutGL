@@ -7,7 +7,7 @@
 #include "../Graphics/Texture2D.h"
 #include "../Graphics/Shader.h"
 #include "../Graphics/SpriteRenderer.h"
-
+#include "../Graphics/SpriteManager.h"
 
 class CircleCollider : public Collider{
     private:
@@ -21,6 +21,9 @@ class CircleCollider : public Collider{
         glm::vec2 calculateCenter() override;
         glm::vec2 calculateDimensions() override;
         void moveTo(glm::vec2 newPosition) override;
+
+        Texture2D debugSprite;
+        void render(Shader& shader) override;
 };
 
 #endif

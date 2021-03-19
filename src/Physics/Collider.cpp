@@ -7,3 +7,7 @@ ColliderType Collider::getType(){
     return type;
 }
 
+void Collider::render(Shader& shader){
+    
+}
+

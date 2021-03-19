@@ -2,6 +2,7 @@
 #define COLLIDER_H
 
 #include <glm/glm.hpp>
+#include "../Graphics/Shader.h"
 
 enum class ColliderType{
     AABB, //Axis Aligned Boundign Box
@@ -21,6 +22,8 @@ class Collider{
         virtual glm::vec2 calculateDimensions() = 0;
 
         virtual void moveTo(glm::vec2 newPosition) = 0;
+
+        virtual void render(Shader& shader);
 
         //virtual bool collisionWith(Collider& other);
 };

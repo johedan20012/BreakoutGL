@@ -3,11 +3,11 @@
 
 #include "Collider.h"
 
-#ifdef MIDEBUG
-    #include "../Graphics/Texture2D.h"
-    #include "../Graphics/Shader.h"
-    #include "../Graphics/SpriteRenderer.h"
-#endif
+
+#include "../Graphics/Texture2D.h"
+#include "../Graphics/Shader.h"
+#include "../Graphics/SpriteRenderer.h"
+#include "../Graphics/SpriteManager.h"
 
 class BoxCollider : public Collider{
     private:
@@ -24,13 +24,10 @@ class BoxCollider : public Collider{
         glm::vec2 calculateCenter() override;
         glm::vec2 calculateDimensions() override;
         void moveTo(glm::vec2 newPosition) override;
-
-        //bool collisionWith(Collider& other);
-
-        #ifdef MIDEBUG
-            Texture2D debugSprite;
-            void render(Shader& shader);
-        #endif
+        
+        Texture2D debugSprite;
+        void render(Shader& shader) override;
+        
 };
 
 #endif

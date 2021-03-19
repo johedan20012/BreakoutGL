@@ -34,7 +34,6 @@ void Level::update(float deltaTime){
 
     for(int i = bricks.size()-1; i>=0; i--){
            if(bricks[i].isDestroyed()){
-               
                bricks.erase(bricks.begin()+i);
            } 
     }
@@ -47,11 +46,14 @@ void Level::update(float deltaTime){
 void Level::render(Shader& shader){
     for(int  i = 0; i<bricks.size(); i++){
         bricks[i].render(shader);
+        //bricks[i].getHitbox().render(shader);
     }
 
     player.render(shader);
+    //player.getHitbox().render(shader);
 
     ball.render(shader);
+    //ball.getHitbox().render(shader);
 }
 
 bool Level::isCompleted(){
@@ -66,14 +68,14 @@ void Level::handleInput(){
 
 void Level::handleCollisions(){
     for(int i=0; i<bricks.size(); i++){
-        if(bricks[i].checkCollisionWith(ball)){
-            bricks[i].hit(ball);
-            ball.hit(bricks[i]);
+        if(Physics::BoxCircleCollision(bricks[i].getHitbox(),ball.getHitbox())){
+            bricks[i].hit();
+            ball.hitBrick(bricks[i].getHitbox());
         }
     }
 
-    if(ball.checkCollisionWith(player)){
-        ball.hit(player);
+    if(Physics::BoxCircleCollision(player.getHitbox(),ball.getHitbox())){
+        ball.hitPlayer();
     }
 }
 
@@ -119,7 +121,7 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
 
     //Iniciar jugador
     player = Player(SpriteManager::getSprite("paddle"));
-    Ball::player = &player;
+    Ball::setPlayer(&player);
 
     //Iniciar pelota
     glm::vec2 ballPosition = player.getPosition()+glm::vec2(player.getSize().x/2.0f - 12.5f,-25.0f);

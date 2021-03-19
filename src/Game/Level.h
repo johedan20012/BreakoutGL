@@ -9,6 +9,7 @@
 #include "Player.h"
 #include "Ball.h"
 #include "../Graphics/SpriteManager.h"
+#include "../Physics/PhysicsFunctions.h"
 
 class Level{
     private:

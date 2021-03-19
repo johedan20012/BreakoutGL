@@ -91,10 +91,10 @@ int main(){
 
 
     SpriteManager::loadSprite("assets/textures/debug/circleCollider.png","DEBUG_1",false);
-
+    SpriteManager::loadSprite("assets/textures/debug/boxCollider.png","DEBUG_2",false);
 
     // ================== Objetos ================================
-    level.load("assets/levels/standar.txt",800,300);
+    level.load("assets/levels/test.txt",800,300);
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); wireframe mode
     //Bucle de dibujo (render loop)

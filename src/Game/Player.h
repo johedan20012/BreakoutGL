@@ -1,8 +1,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "../Physics/PhysicsObject.h"
+#include "GameObject.h"
 #include "../IO/Keyboard.h"
+#include "../Physics/BoxCollider.h"
 
 enum class PlayerModifier{
     LARGE_BAR,
@@ -17,17 +18,20 @@ enum class PlayerModifier{
     CRAZY_TIME
 };
 
-class Player : public PhysicsObject{
+class Player : public GameObject{
     private:
         unsigned int lives;
         bool isSticky;
         bool hasLasers;
         unsigned char sizeBar; //0 es el más pequeño, 1 es normal y 4 el más grande
         unsigned int score;
+        BoxCollider hitbox;
 
     public:
         Player() = default;
         Player(Texture2D& sprite);
+
+        BoxCollider& getHitbox();
 
         void update(float deltaTime);
 

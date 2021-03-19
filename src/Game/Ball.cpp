@@ -3,9 +3,14 @@
 Player* Ball::player = nullptr;
 
 Ball::Ball(glm::vec2 position,glm::vec2 velocity,Texture2D& sprite)
-    : PhysicsObject(position,0,glm::vec2(25.0f,25.0f),glm::vec3(1.0f),velocity,sprite,new CircleCollider(position,12.5f)), isStuck(true){
-        
-    }
+    : GameObject(position,0,glm::vec2(12.0f,12.0f),glm::vec3(1.0f),velocity,sprite)
+    , isStuck(true){
+    hitbox = CircleCollider(position,6.0f);
+}
+
+CircleCollider& Ball::getHitbox(){
+    return hitbox;
+}
 
 void Ball::setStuck(bool stuck){
     isStuck = stuck;
@@ -27,10 +32,10 @@ void Ball::update(float deltaTime,unsigned int scrWidth,unsigned int scrHeight){
             velocity.y *= -1;
         }
     }else{
-        position = player->getPosition()+glm::vec2(player->getSize().x/2.0f - 12.5f,-25.0f)+glm::vec2(0.0f,-15.0f);
+        position = player->getPosition()+glm::vec2(player->getSize().x/2.0f - size.x/2.0f,-size.y);
     }
 
-    updateHitbox(position);
+    hitbox.moveTo(position);
 }
 
 void Ball::reset(glm::vec2 pos,glm::vec2 vel){
@@ -38,19 +43,19 @@ void Ball::reset(glm::vec2 pos,glm::vec2 vel){
     velocity = vel;
 }
 
-void Ball::hit(PhysicsObject& other){
-    glm::vec2 center = hitbox->calculateCenter();
-    glm::vec2 centerOther = other.getHitbox()->calculateCenter();
-    glm::vec2 halfDimOther = other.getHitbox()->calculateDimensions() / 2.0f;
+void Ball::hitBrick(BoxCollider& brickHitbox){
+    glm::vec2 center = hitbox.calculateCenter();
+    glm::vec2 centerOther = brickHitbox.calculateCenter();
+    glm::vec2 halfDimOther = brickHitbox.calculateDimensions() / 2.0f;
     
-    glm::vec2 difference = hitbox->calculateCenter() - other.getHitbox()->calculateCenter();
+    glm::vec2 difference = hitbox.calculateCenter() - brickHitbox.calculateCenter();
     glm::vec2 clamped = glm::clamp(difference, -halfDimOther,halfDimOther);
     glm::vec2 closest = centerOther + clamped;
     difference = closest - center;
     
-    float radius = hitbox->calculateDimensions().x / 2.0f;
+    float radius = hitbox.calculateDimensions().x / 2.0f;
 
-    glm::vec2 dirDiff = directionVector(difference);
+    glm::vec2 dirDiff = Physics::DirectionVector(difference);
     if (dirDiff.x == 1.0f || dirDiff.x == -1.0f) {
         velocity.x *= -1;
 
@@ -70,4 +75,27 @@ void Ball::hit(PhysicsObject& other){
             position.y += penetration;
         }
     }
+
+    hitbox.moveTo(position);
+}
+
+void Ball::hitPlayer(){
+    glm::vec2 playerCenter = player->getHitbox().calculateCenter();
+    glm::vec2 playerSize = player->getHitbox().calculateDimensions();
+    glm::vec2 center = hitbox.calculateCenter();
+    //glm::vec2 playerPos = playerCenter - (playerSize/2.0f);
+    float distance = center.x - playerCenter.x;
+    float percentage = distance / (playerSize.x / 2.0f);
+
+    float strength = 2.0f;
+    glm::vec2 oldVelocity = velocity;
+    velocity.x = INITIAL_BALL_VELOCITY.x * percentage * strength;
+    velocity.y = -1.0f * abs(velocity.y);  
+    velocity = glm::normalize(velocity) * glm::length(oldVelocity);
+    
+    hitbox.moveTo(position);
+}
+
+void Ball::setPlayer(Player* p){
+    player = p;
 }

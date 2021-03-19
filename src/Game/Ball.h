@@ -2,21 +2,24 @@
 #define BALL_H
 
 #include "Player.h"
-#include "../Physics/PhysicsObject.h"
-
-
 #include "../Graphics/SpriteManager.h"
+#include "../Physics/CircleCollider.h"
+#include "../Physics/PhysicsFunctions.h"
 
+//Velocidad inicial de la pelota
+const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
 
-class Ball : public PhysicsObject{
+class Ball : public GameObject{
     private:
         bool isStuck;
-    public: //No mires este atributo publico
-        static Player* player; //Esto causara problemas eventualmente, pero funciona
-    
+        static Player* player;
+        CircleCollider hitbox;
+
     public:
         Ball() = default;
         Ball(glm::vec2 position,glm::vec2 velocity,Texture2D& sprite);
+
+        CircleCollider& getHitbox();
 
         void setStuck(bool stuck);
 
@@ -24,8 +27,13 @@ class Ball : public PhysicsObject{
 
         void reset(glm::vec2 pos, glm::vec2 vel);
 
-        void hit(PhysicsObject& other)override;
-        
+        void hitBrick(BoxCollider& brickHitbox);
+
+        void hitPlayer();
+
+    public:
+        //Metodos estaticos
+        static void setPlayer(Player* p);
 };
 
 #endif
