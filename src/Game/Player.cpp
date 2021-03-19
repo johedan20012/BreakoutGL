@@ -1,12 +1,14 @@
 #include "Player.h"
 
 Player::Player(Texture2D& sprite)
-    : GameObject(glm::vec2(350.0f,580.0f),0,glm::vec2(100.0f,20.0f),glm::vec3(1.0),glm::vec2(500.0f,0.0f),sprite)
+    : PhysicsObject(glm::vec2(350.0f,580.0f),0,glm::vec2(100.0f,20.0f),glm::vec3(1.0),glm::vec2(500.0f,0.0f),sprite,new BoxCollider(glm::vec2(350.0f,580.0f),glm::vec2(100.0f,20.0f)))
     , lives(3),isSticky(false),hasLasers(false),sizeBar(1),score(0){ }
 
 void Player::update(float deltaTime){
     //Manejar la entrada
     handleInput(deltaTime);
+
+    updateHitbox(position);
 }
 
 void Player::addScore(unsigned int points){

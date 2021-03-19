@@ -23,7 +23,6 @@
 #include "IO/Keyboard.h"
 #include "IO/Mouse.h"
 
-#define MIDEBUG /*Activa las funciones para DEBUG */
 
 void framebufferSizeCallback(GLFWwindow* window,int witdh, int height);
 
@@ -89,6 +88,10 @@ int main(){
     SpriteManager::loadSprite("assets/textures/background.jpg","background",false);
     SpriteManager::loadSprite("assets/textures/paddle.png","paddle",false);
     SpriteManager::loadSprite("assets/textures/awesomeface.png","ball",false);
+
+
+    SpriteManager::loadSprite("assets/textures/debug/circleCollider.png","DEBUG_1",false);
+
 
     // ================== Objetos ================================
     level.load("assets/levels/standar.txt",800,300);

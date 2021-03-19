@@ -15,6 +15,11 @@ glm::vec2 BoxCollider::calculateDimensions(){
     return max - min;
 }
 
+void BoxCollider::moveTo(glm::vec2 newPosition){
+    max = newPosition + calculateDimensions();
+    min = newPosition;
+}
+
 glm::vec2 BoxCollider::calculateCenter(){
     return (min + max) / 2.0f;
 }

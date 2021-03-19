@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "GameObject.h"
+#include "../Physics/PhysicsObject.h"
 #include "../IO/Keyboard.h"
 
 enum class PlayerModifier{
@@ -17,7 +17,7 @@ enum class PlayerModifier{
     CRAZY_TIME
 };
 
-class Player : public GameObject{
+class Player : public PhysicsObject{
     private:
         unsigned int lives;
         bool isSticky;

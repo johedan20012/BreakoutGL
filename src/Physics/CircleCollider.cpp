@@ -11,8 +11,6 @@ glm::vec2 CircleCollider::calculateDimensions(){
     return glm::vec2(radius*2.0f);
 }
 
-#ifdef MIDEBUG
-    void CircleCollider::render(Shader& shader){
-        SpriteRenderer::drawSprite(sprite,shader,min,radius*2.0f,0,glm::vec3(1.0f));
-    }
-#endif
+void CircleCollider::moveTo(glm::vec2 newPosition){
+    center = newPosition;
+}

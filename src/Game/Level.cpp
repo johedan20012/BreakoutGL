@@ -30,6 +30,15 @@ void Level::load(const char* filename,unsigned int levelWidth,unsigned int level
 void Level::update(float deltaTime){
     handleInput();
 
+    handleCollisions();
+
+    for(int i = bricks.size()-1; i>=0; i--){
+           if(bricks[i].isDestroyed()){
+               
+               bricks.erase(bricks.begin()+i);
+           } 
+    }
+
     player.update(deltaTime);
 
     ball.update(deltaTime, 800.0f,600.0f);
@@ -54,6 +63,20 @@ void Level::handleInput(){
         ball.setStuck(false);
     }
 }
+
+void Level::handleCollisions(){
+    for(int i=0; i<bricks.size(); i++){
+        if(bricks[i].checkCollisionWith(ball)){
+            bricks[i].hit(ball);
+            ball.hit(bricks[i]);
+        }
+    }
+
+    if(ball.checkCollisionWith(player)){
+        ball.hit(player);
+    }
+}
+
 
 void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth,unsigned int levelHeight){
     unsigned int noRows = tileData.size();
@@ -96,8 +119,9 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
 
     //Iniciar jugador
     player = Player(SpriteManager::getSprite("paddle"));
+    Ball::player = &player;
 
     //Iniciar pelota
     glm::vec2 ballPosition = player.getPosition()+glm::vec2(player.getSize().x/2.0f - 12.5f,-25.0f);
-    ball = Ball(ballPosition,glm::vec2(100.0f,-350.0f),&player,SpriteManager::getSprite("ball"));
+    ball = Ball(ballPosition,glm::vec2(100.0f,-350.0f),SpriteManager::getSprite("ball"));
 }

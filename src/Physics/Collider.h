@@ -20,6 +20,8 @@ class Collider{
         virtual glm::vec2 calculateCenter() = 0;
         virtual glm::vec2 calculateDimensions() = 0;
 
+        virtual void moveTo(glm::vec2 newPosition) = 0;
+
         //virtual bool collisionWith(Collider& other);
 };
 #endif

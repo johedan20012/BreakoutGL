@@ -32,6 +32,8 @@ class Level{
     private:
         void handleInput();
 
+        void handleCollisions();
+
         void init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth,unsigned int levelHeight);
 };
 
