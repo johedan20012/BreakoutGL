@@ -4,7 +4,7 @@ Player* Ball::player = nullptr;
 
 Ball::Ball(glm::vec2 position,glm::vec2 velocity,Texture2D& sprite)
     : GameObject(position,0,glm::vec2(12.0f,12.0f),glm::vec3(1.0f),velocity,sprite)
-    , isStuck(true){
+    ,diffPosX(0.5f), stuck(true){
     hitbox = CircleCollider(position,6.0f);
 }
 
@@ -13,11 +13,15 @@ CircleCollider& Ball::getHitbox(){
 }
 
 void Ball::setStuck(bool stuck){
-    isStuck = stuck;
+    this->stuck = stuck;
+}
+
+bool Ball::isStuck(){
+    return stuck;
 }
 
 void Ball::update(float deltaTime,unsigned int scrWidth,unsigned int scrHeight){
-    if(!isStuck){ //Actualiza la pelota si no esta atorada
+    if(!stuck){ //Actualiza la pelota si no esta atorada
         position += velocity * deltaTime;
         if(position.x+size.x > scrWidth){
             position.x = scrWidth-size.x;
@@ -32,7 +36,8 @@ void Ball::update(float deltaTime,unsigned int scrWidth,unsigned int scrHeight){
             velocity.y *= -1;
         }
     }else{
-        position = player->getPosition()+glm::vec2(player->getSize().x/2.0f - size.x/2.0f,-size.y);
+        float posX = diffPosX*(player->getSize().x-size.x);
+        position = player->getPosition()+glm::vec2(posX,-size.y);
     }
 
     hitbox.moveTo(position);
@@ -80,6 +85,12 @@ void Ball::hitBrick(BoxCollider& brickHitbox){
 }
 
 void Ball::hitPlayer(){
+    if(player->isSticky() && velocity.y > 0){ //Si el jugador es pegajoso y la pelota esta cayendo, entonces la pelota se pega
+        diffPosX = (position.x-player->getPosition().x) / (player->getSize().x-size.x);
+
+        stuck = true;
+    }
+
     glm::vec2 playerCenter = player->getHitbox().calculateCenter();
     glm::vec2 playerSize = player->getHitbox().calculateDimensions();
     glm::vec2 center = hitbox.calculateCenter();
@@ -92,8 +103,6 @@ void Ball::hitPlayer(){
     velocity.x = INITIAL_BALL_VELOCITY.x * percentage * strength;
     velocity.y = -1.0f * abs(velocity.y);  
     velocity = glm::normalize(velocity) * glm::length(oldVelocity);
-    
-    hitbox.moveTo(position);
 }
 
 void Ball::setPlayer(Player* p){

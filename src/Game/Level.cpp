@@ -30,6 +30,12 @@ void Level::load(const char* filename,unsigned int levelWidth,unsigned int level
 void Level::update(float deltaTime){
     handleInput();
 
+    player.update(deltaTime);
+
+    powerUp.update(deltaTime);
+
+    ball.update(deltaTime, 800.0f,600.0f);
+
     handleCollisions();
 
     for(int i = bricks.size()-1; i>=0; i--){
@@ -37,12 +43,6 @@ void Level::update(float deltaTime){
                bricks.erase(bricks.begin()+i);
            } 
     }
-
-    player.update(deltaTime);
-
-    powerUp.update(deltaTime);
-
-    ball.update(deltaTime, 800.0f,600.0f);
 }
 
 void Level::render(Shader& shader){
@@ -72,23 +72,27 @@ void Level::handleInput(){
 }
 
 void Level::handleCollisions(){
-    for(int i=0; i<bricks.size(); i++){
-        if(Physics::BoxCircleCollision(bricks[i].getHitbox(),ball.getHitbox())){
-            bricks[i].hit();
-            if(bricks[i].isDestroyed() && !powerUp.isActive()){ //Trata de generar un modificador con tipo aleatorio
-                int value = rand()%6; // 1 de cada 6 genera un modificador
-                if(value == 0){
-                    ModifierType type =(ModifierType)(rand()%5);// (ModifierType)(rand()%(int)(ModifierType::NUM_TYPES)); //Randomiza el tipo de mofi
-                
-                    powerUp = Modifier(bricks[i].getPosition(),glm::vec2(50.0f,175.0f),type,SpriteManager::getSprite("pow"+std::to_string((int)(type)+1)));
+    if(!ball.isStuck()){
+        for(int i=0; i<bricks.size(); i++){
+            if(Physics::BoxCircleCollision(bricks[i].getHitbox(),ball.getHitbox())){
+                bricks[i].hit();
+                if(bricks[i].isDestroyed() && !powerUp.isActive()){ //Trata de generar un modificador con tipo aleatorio
+                    int value = rand()%6; // 1 de cada 6 genera un modificador
+                    if(value == 0){
+                        ModifierType type =(ModifierType)(rand()%5);// (ModifierType)(rand()%(int)(ModifierType::NUM_TYPES)); //Randomiza el tipo de mofi
+                    
+                        powerUp = Modifier(bricks[i].getPosition(),glm::vec2(50.0f,175.0f),type,SpriteManager::getSprite("pow"+std::to_string((int)(type)+1)));
+                    }
                 }
+                ball.hitBrick(bricks[i].getHitbox());
             }
-            ball.hitBrick(bricks[i].getHitbox());
         }
     }
 
-    if(Physics::BoxCircleCollision(player.getHitbox(),ball.getHitbox())){
-        ball.hitPlayer();
+    if(!ball.isStuck()){
+        if(Physics::BoxCircleCollision(player.getHitbox(),ball.getHitbox())){
+            ball.hitPlayer();
+        }
     }
 
     if(powerUp.isActive()){
@@ -140,7 +144,7 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
     }
 
     //Iniciar jugador
-    player = Player(SpriteManager::getSprite("paddle"));
+    player = Player(SpriteManager::getSprite("bar"));
     Ball::setPlayer(&player);
 
     //Iniciar pelota

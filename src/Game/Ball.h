@@ -11,7 +11,8 @@ const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
 
 class Ball : public GameObject{
     private:
-        bool isStuck;
+        bool stuck;
+        float  diffPosX;
         static Player* player;
         CircleCollider hitbox;
 
@@ -22,6 +23,7 @@ class Ball : public GameObject{
         CircleCollider& getHitbox();
 
         void setStuck(bool stuck);
+        bool isStuck();
 
         void update(float deltaTime,unsigned int scrWidth,unsigned int scrHeight);
 

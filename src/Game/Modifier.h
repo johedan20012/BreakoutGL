@@ -12,9 +12,13 @@ enum class ModifierType{
     RESET_BAR,
     FAST_BALL,
     SLOW_BALL,
+    THROUGH_BALL,
+    FIRE_BALL,
     EXTRA_BALL,
     REMOVE_BALL,
     CRAZY_TIME,
+    EXTRA_LIFE,
+    NEXT_LEVEL,
     //=========================
     NUM_TYPES
 };

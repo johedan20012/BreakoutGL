@@ -92,7 +92,8 @@ int main(){
     SpriteManager::loadSprite("assets/textures/block_solid.png","block_solid",false);
     SpriteManager::loadSprite("assets/textures/block.png","block",false);
     SpriteManager::loadSprite("assets/textures/background.jpg","background",false);
-    SpriteManager::loadSprite("assets/textures/paddle.png","paddle",false);
+    SpriteManager::loadSprite("assets/textures/bar.png","bar",false);
+    SpriteManager::loadSprite("assets/textures/barSticky.png","barSticky",false);
     SpriteManager::loadSprite("assets/textures/awesomeface.png","ball",false);
     SpriteManager::loadSprite("assets/textures/Power1.png","pow1",false);
     SpriteManager::loadSprite("assets/textures/Power2.png","pow2",false);

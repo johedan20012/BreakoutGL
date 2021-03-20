@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "Modifier.h"
+#include "../Graphics/SpriteManager.h"
 #include "../IO/Keyboard.h"
 #include "../Physics/BoxCollider.h"
 
@@ -11,8 +12,8 @@ const glm::vec2 PLAYER_INITIAL_SIZE(100.0f,20.0f);
 class Player : public GameObject{
     private:
         unsigned int lives;
-        bool isSticky;
-        bool hasLasers;
+        bool sticky;
+        bool lasers;
         unsigned char sizeBar; //0 es el más pequeño, 1 es normal y 4 el más grande
         unsigned int score;
         BoxCollider hitbox;
@@ -27,6 +28,8 @@ class Player : public GameObject{
 
         void addScore(unsigned int points);
         unsigned int getScore();
+
+        bool isSticky();
 
         void applyModifier(ModifierType modifier);
 

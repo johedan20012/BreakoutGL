@@ -2,7 +2,7 @@
 
 Player::Player(Texture2D& sprite)
     : GameObject(glm::vec2(350.0f,580.0f),0,PLAYER_INITIAL_SIZE,glm::vec3(1.0),glm::vec2(500.0f,0.0f),sprite)
-    , lives(3),isSticky(false),hasLasers(false),sizeBar(1),score(0){ 
+    , lives(3),sticky(false),lasers(false),sizeBar(1),score(0){ 
         hitbox = BoxCollider(glm::vec2(350.0f,580.0f),glm::vec2(100.0f,20.0f));
 }
 
@@ -25,6 +25,10 @@ unsigned int Player::getScore(){
     return score;
 }
 
+bool Player::isSticky(){
+    return sticky;
+}
+
 void Player::applyModifier(ModifierType modifier){
     switch (modifier)
     {
@@ -38,15 +42,15 @@ void Player::applyModifier(ModifierType modifier){
             break;
 
         case ModifierType::STICKY_BAR:
-            isSticky = true;
+            sticky = true;
             break;
 
         case ModifierType::LASER_BAR:
-            hasLasers = true;
+            lasers = true;
             break;
         case ModifierType::RESET_BAR:
-            isSticky = false;
-            hasLasers = false;
+            sticky = false;
+            lasers = false;
             sizeBar = 1;
     }
 
@@ -55,6 +59,15 @@ void Player::applyModifier(ModifierType modifier){
         size = PLAYER_INITIAL_SIZE - glm::vec2(PLAYER_INITIAL_SIZE.x/2.0f,0.0f);
     }else{
         size = PLAYER_INITIAL_SIZE + glm::vec2((PLAYER_INITIAL_SIZE.x/2.0f)*(sizeBar-1),0.0f);
+    }
+    if(position.x+size.x > 800.0f){
+        position.x = 800.0f-size.x;
+    }
+
+    if(sticky){
+        sprite = SpriteManager::getSprite("barSticky");
+    }else{
+        sprite = SpriteManager::getSprite("bar");
     }
 
     hitbox.changeDimensions(size);
