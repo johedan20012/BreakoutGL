@@ -17,6 +17,10 @@ void CircleCollider::moveTo(glm::vec2 newPosition){
     center = newPosition+glm::vec2(radius,radius);
 }
 
+void CircleCollider::changeDimensions(glm::vec2 newDimensions){
+    radius = newDimensions.x / 2.0f;
+}
+
 void CircleCollider::render(Shader& shader){
     SpriteRenderer::drawSprite(debugSprite,shader,center-glm::vec2(radius,radius),glm::vec2(radius*2.0f,radius*2.0f),0,glm::vec3(1.0f));
 }

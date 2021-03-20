@@ -14,9 +14,3 @@ glm::vec2 GameObject::getSize(){
 void GameObject::render(Shader& shader){
     SpriteRenderer::drawSprite(sprite,shader,position,size,rotation,color);
 }
-
-/*void GameObject::cleanup(){
-    sprite.cleanup();
-}*/
-
-void GameObject::update(){}

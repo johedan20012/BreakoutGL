@@ -24,6 +24,7 @@ class BoxCollider : public Collider{
         glm::vec2 calculateCenter() override;
         glm::vec2 calculateDimensions() override;
         void moveTo(glm::vec2 newPosition) override;
+        void changeDimensions(glm::vec2 newDimensions)override;
         
         Texture2D debugSprite;
         void render(Shader& shader) override;

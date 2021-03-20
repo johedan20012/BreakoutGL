@@ -2,21 +2,11 @@
 #define PLAYER_H
 
 #include "GameObject.h"
+#include "Modifier.h"
 #include "../IO/Keyboard.h"
 #include "../Physics/BoxCollider.h"
 
-enum class PlayerModifier{
-    LARGE_BAR,
-    SHORT_BAR,
-    STICKY_BAR,
-    LASER_BAR,
-    RESET_BAR,
-    FAST_BALL,
-    SLOW_BALL,
-    EXTRA_BALL,
-    REMOVE_BALL,
-    CRAZY_TIME
-};
+const glm::vec2 PLAYER_INITIAL_SIZE(100.0f,20.0f);
 
 class Player : public GameObject{
     private:
@@ -38,7 +28,7 @@ class Player : public GameObject{
         void addScore(unsigned int points);
         unsigned int getScore();
 
-        void applyModifier(PlayerModifier modifier);
+        void applyModifier(ModifierType modifier);
 
     private:
         void handleInput(float deltaTime);

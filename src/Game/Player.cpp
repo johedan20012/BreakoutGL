@@ -1,7 +1,7 @@
 #include "Player.h"
 
 Player::Player(Texture2D& sprite)
-    : GameObject(glm::vec2(350.0f,580.0f),0,glm::vec2(100.0f,20.0f),glm::vec3(1.0),glm::vec2(500.0f,0.0f),sprite)
+    : GameObject(glm::vec2(350.0f,580.0f),0,PLAYER_INITIAL_SIZE,glm::vec3(1.0),glm::vec2(500.0f,0.0f),sprite)
     , lives(3),isSticky(false),hasLasers(false),sizeBar(1),score(0){ 
         hitbox = BoxCollider(glm::vec2(350.0f,580.0f),glm::vec2(100.0f,20.0f));
 }
@@ -25,30 +25,40 @@ unsigned int Player::getScore(){
     return score;
 }
 
-void Player::applyModifier(PlayerModifier modifier){
+void Player::applyModifier(ModifierType modifier){
     switch (modifier)
     {
-        case PlayerModifier::LARGE_BAR:
+        case ModifierType::LARGE_BAR:
             sizeBar++;
             if(sizeBar > 4)sizeBar = 4;
             break;
         
-        case PlayerModifier::SHORT_BAR:
+        case ModifierType::SHORT_BAR:
             sizeBar = 0;
             break;
 
-        case PlayerModifier::STICKY_BAR:
+        case ModifierType::STICKY_BAR:
             isSticky = true;
             break;
 
-        case PlayerModifier::LASER_BAR:
+        case ModifierType::LASER_BAR:
             hasLasers = true;
             break;
-        case PlayerModifier::RESET_BAR:
+        case ModifierType::RESET_BAR:
             isSticky = false;
             hasLasers = false;
             sizeBar = 1;
     }
+
+    //Actualizar la barra del jugador con los valores actuales
+    if(sizeBar == 0){
+        size = PLAYER_INITIAL_SIZE - glm::vec2(PLAYER_INITIAL_SIZE.x/2.0f,0.0f);
+    }else{
+        size = PLAYER_INITIAL_SIZE + glm::vec2((PLAYER_INITIAL_SIZE.x/2.0f)*(sizeBar-1),0.0f);
+    }
+
+    hitbox.changeDimensions(size);
+    hitbox.moveTo(position);
 }
 
 void Player::handleInput(float deltaTime){

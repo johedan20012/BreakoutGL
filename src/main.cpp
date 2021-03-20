@@ -6,6 +6,9 @@
 #include <GLFW/glfw3.h>  //Maneja la creación de ventana , i/0, etc.
 #include <stb/stb_image.h> //Maneja el import de imagenes para texturas
 
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
+
 // Librerias para matematicas
 /*#include "Math/Vector3D.hpp"
 #include "Math/Matrix3D.hpp"
@@ -32,6 +35,9 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 int main(){
+    //Inicializa la semilla de los números aleatorios con el tiempo actual
+    srand (time(NULL));
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -88,7 +94,11 @@ int main(){
     SpriteManager::loadSprite("assets/textures/background.jpg","background",false);
     SpriteManager::loadSprite("assets/textures/paddle.png","paddle",false);
     SpriteManager::loadSprite("assets/textures/awesomeface.png","ball",false);
-
+    SpriteManager::loadSprite("assets/textures/Power1.png","pow1",false);
+    SpriteManager::loadSprite("assets/textures/Power2.png","pow2",false);
+    SpriteManager::loadSprite("assets/textures/Power3.png","pow3",false);
+    SpriteManager::loadSprite("assets/textures/Power4.png","pow4",false);
+    SpriteManager::loadSprite("assets/textures/Power5.png","pow5",false);
 
     SpriteManager::loadSprite("assets/textures/debug/circleCollider.png","DEBUG_1",false);
     SpriteManager::loadSprite("assets/textures/debug/boxCollider.png","DEBUG_2",false);

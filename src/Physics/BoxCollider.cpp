@@ -22,6 +22,10 @@ void BoxCollider::moveTo(glm::vec2 newPosition){
     min = newPosition;
 }
 
+void BoxCollider::changeDimensions(glm::vec2 newDimensions){
+    max = min + newDimensions;
+}
+
 glm::vec2 BoxCollider::calculateCenter(){
     return (min + max) / 2.0f;
 }

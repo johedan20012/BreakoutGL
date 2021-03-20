@@ -22,6 +22,7 @@ class Collider{
         virtual glm::vec2 calculateDimensions() = 0;
 
         virtual void moveTo(glm::vec2 newPosition) = 0;
+        virtual void changeDimensions(glm::vec2 newDimensions) = 0;
 
         virtual void render(Shader& shader);
 

@@ -4,10 +4,12 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <stdlib.h> 
 
 #include "Brick.h"
 #include "Player.h"
 #include "Ball.h"
+#include "Modifier.h"
 #include "../Graphics/SpriteManager.h"
 #include "../Physics/PhysicsFunctions.h"
 
@@ -18,6 +20,8 @@ class Level{
         Player player;
 
         Ball ball;
+
+        Modifier powerUp;
 
     public:
         Level();

@@ -25,10 +25,6 @@ class GameObject{
         glm::vec2 getSize();
 
         void render(Shader& shader);
-
-        //void cleanup();
-
-        virtual void update(); //Las clases derivadas deben definir este metodo
 };
 
 #endif

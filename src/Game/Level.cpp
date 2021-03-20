@@ -40,6 +40,8 @@ void Level::update(float deltaTime){
 
     player.update(deltaTime);
 
+    powerUp.update(deltaTime);
+
     ball.update(deltaTime, 800.0f,600.0f);
 }
 
@@ -54,6 +56,9 @@ void Level::render(Shader& shader){
 
     ball.render(shader);
     //ball.getHitbox().render(shader);
+    if(powerUp.isActive()){
+        powerUp.render(shader);
+    }
 }
 
 bool Level::isCompleted(){
@@ -70,12 +75,27 @@ void Level::handleCollisions(){
     for(int i=0; i<bricks.size(); i++){
         if(Physics::BoxCircleCollision(bricks[i].getHitbox(),ball.getHitbox())){
             bricks[i].hit();
+            if(bricks[i].isDestroyed() && !powerUp.isActive()){ //Trata de generar un modificador con tipo aleatorio
+                int value = rand()%6; // 1 de cada 6 genera un modificador
+                if(value == 0){
+                    ModifierType type =(ModifierType)(rand()%5);// (ModifierType)(rand()%(int)(ModifierType::NUM_TYPES)); //Randomiza el tipo de mofi
+                
+                    powerUp = Modifier(bricks[i].getPosition(),glm::vec2(50.0f,175.0f),type,SpriteManager::getSprite("pow"+std::to_string((int)(type)+1)));
+                }
+            }
             ball.hitBrick(bricks[i].getHitbox());
         }
     }
 
     if(Physics::BoxCircleCollision(player.getHitbox(),ball.getHitbox())){
         ball.hitPlayer();
+    }
+
+    if(powerUp.isActive()){
+        if(Physics::BoxBoxCollision(player.getHitbox(),powerUp.getHitbox())){
+            powerUp.desactivate();
+            player.applyModifier(powerUp.getType());
+        }
     }
 }
 
