@@ -58,5 +58,8 @@ glm::vec2 Physics::DirectionVector(glm::vec2 vector){
             best_match = i;
         }
     }
+    if(best_match == -1){ //Sino es ninguna entonces se toma como vertical hacia arriba
+        best_match = 1;
+    }
     return compass[best_match];
 }

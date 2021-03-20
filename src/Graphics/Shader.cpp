@@ -83,8 +83,8 @@ unsigned int Shader::compileShader(const char* shaderFilename,GLenum type){
     unsigned int shader;
     
     shader = glCreateShader(type);
-
-    const GLchar* shaderScr = loadShaderScr(shaderFilename).c_str();
+    std::string shaderSrc = loadShaderScr(shaderFilename);
+    const GLchar* shaderScr = shaderSrc.c_str();
     glShaderSource(shader,1,&shaderScr,NULL);
 
     glCompileShader(shader);
