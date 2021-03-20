@@ -100,6 +100,7 @@ int main(){
     SpriteManager::loadSprite("assets/textures/Power3.png","pow3",false);
     SpriteManager::loadSprite("assets/textures/Power4.png","pow4",false);
     SpriteManager::loadSprite("assets/textures/Power5.png","pow5",false);
+    SpriteManager::loadSprite("assets/textures/particle.png","particle",false);
 
     SpriteManager::loadSprite("assets/textures/debug/circleCollider.png","DEBUG_1",false);
     SpriteManager::loadSprite("assets/textures/debug/boxCollider.png","DEBUG_2",false);

@@ -24,6 +24,8 @@ class GameObject{
 
         glm::vec2 getSize();
 
+        glm::vec2 getVelocity();
+
         void render(Shader& shader);
 };
 

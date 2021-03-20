@@ -36,6 +36,8 @@ void Level::update(float deltaTime){
 
     ball.update(deltaTime, 800.0f,600.0f);
 
+    ballParticles.update(ball,deltaTime);
+
     handleCollisions();
 
     for(int i = bricks.size()-1; i>=0; i--){
@@ -46,6 +48,8 @@ void Level::update(float deltaTime){
 }
 
 void Level::render(Shader& shader){
+    ballParticles.render(shader);
+
     for(int  i = 0; i<bricks.size(); i++){
         bricks[i].render(shader);
         //bricks[i].getHitbox().render(shader);
@@ -150,4 +154,7 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
     //Iniciar pelota
     glm::vec2 ballPosition = player.getPosition()+glm::vec2(player.getSize().x/2.0f - 12.5f,-25.0f);
     ball = Ball(ballPosition,glm::vec2(100.0f,-350.0f),SpriteManager::getSprite("ball"));
+
+    //Inicia el generador de particulas
+    ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),100,SpriteManager::getSprite("particle"));
 }

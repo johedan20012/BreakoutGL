@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "Ball.h"
 #include "Modifier.h"
+#include "Particles/ParticleGenerator.h"
 #include "../Graphics/SpriteManager.h"
 #include "../Physics/PhysicsFunctions.h"
 
@@ -22,6 +23,8 @@ class Level{
         Ball ball;
 
         Modifier powerUp;
+
+        ParticleGenerator ballParticles;
 
     public:
         Level();

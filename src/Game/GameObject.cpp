@@ -11,6 +11,10 @@ glm::vec2 GameObject::getSize(){
     return size;
 }
 
+glm::vec2 GameObject::getVelocity(){
+    return velocity;
+}
+
 void GameObject::render(Shader& shader){
     SpriteRenderer::drawSprite(sprite,shader,position,size,rotation,color);
 }
