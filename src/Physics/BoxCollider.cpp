@@ -31,5 +31,5 @@ glm::vec2 BoxCollider::calculateCenter(){
 }
 
 void BoxCollider::render(Shader& shader){
-    SpriteRenderer::drawSprite(debugSprite,shader,min,max-min,0,glm::vec3(1.0f));
+    SpriteRenderer::drawSprite(debugSprite,shader,min,max-min,0,glm::vec4(1.0f));
 }

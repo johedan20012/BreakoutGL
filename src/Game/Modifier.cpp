@@ -1,7 +1,7 @@
 #include "Modifier.h"
 
 Modifier::Modifier(glm::vec2 position,glm::vec2 velocity,ModifierType type,Texture2D& sprite)
-    :GameObject(position,0,glm::vec2(50.0f,50.0f),glm::vec3(1.0f),velocity,sprite)
+    :GameObject(position,0,glm::vec2(50.0f,50.0f),glm::vec4(1.0f),velocity,sprite)
     ,type(type),active(true){
         hitbox = BoxCollider(position,glm::vec2(50.0f,50.0f));
 }

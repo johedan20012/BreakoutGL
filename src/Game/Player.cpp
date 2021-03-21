@@ -1,7 +1,7 @@
 #include "Player.h"
 
 Player::Player(Texture2D& sprite)
-    : GameObject(glm::vec2(350.0f,580.0f),0,PLAYER_INITIAL_SIZE,glm::vec3(1.0),glm::vec2(500.0f,0.0f),sprite)
+    : GameObject(glm::vec2(350.0f,580.0f),0,PLAYER_INITIAL_SIZE,glm::vec4(1.0f),glm::vec2(500.0f,0.0f),sprite)
     , lives(3),sticky(false),lasers(false),sizeBar(1),score(0){ 
         hitbox = BoxCollider(glm::vec2(350.0f,580.0f),glm::vec2(100.0f,20.0f));
 }

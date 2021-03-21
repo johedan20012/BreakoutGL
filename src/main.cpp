@@ -129,7 +129,7 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT);
 
         //Render
-        SpriteRenderer::drawSprite(SpriteManager::getSprite("background"),shader,glm::vec2(0.0f,0.0f),glm::vec2(800.0f,600.0f),0,glm::vec3(1.0f));
+        SpriteRenderer::drawSprite(SpriteManager::getSprite("background"),shader,glm::vec2(0.0f,0.0f),glm::vec2(800.0f,600.0f),0,glm::vec4(1.0f));
         level.render(shader);
         
         

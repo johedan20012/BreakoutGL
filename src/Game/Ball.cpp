@@ -3,7 +3,7 @@
 Player* Ball::player = nullptr;
 
 Ball::Ball(glm::vec2 position,glm::vec2 velocity,Texture2D& sprite)
-    : GameObject(position,0,glm::vec2(12.0f,12.0f),glm::vec3(1.0f),velocity,sprite)
+    : GameObject(position,0,glm::vec2(12.0f,12.0f),glm::vec4(1.0f),velocity,sprite)
     ,diffPosX(0.5f), stuck(true){
     hitbox = CircleCollider(position,6.0f);
 }

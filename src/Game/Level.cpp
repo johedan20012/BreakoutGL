@@ -120,26 +120,26 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
             if(tileData[i][j]==1){ //Labrillo solido
                 bricks.push_back(Brick(glm::vec2(unitWidth*j,unitHeight*i),
                                        glm::vec2(unitWidth,unitHeight),
-                                       glm::vec3(0.8f,0.8f,0.7f),
+                                       glm::vec4(0.8f,0.8f,0.7f,1.0f),
                                        SpriteManager::getSprite("block_solid"),
                                        true));
             }else if(tileData[i][j]>1){
                 glm::vec2 pos(unitWidth*j,unitHeight*i);
                 glm::vec2 size(unitWidth,unitHeight);
 
-                glm::vec3 color(1.0f);
+                glm::vec4 color(1.0f);
                 switch (tileData[i][j]){
                     case 2:
-                        color = glm::vec3(0.2f, 0.6f, 1.0f);
+                        color = glm::vec4(0.2f, 0.6f, 1.0f,1.0f);
                         break;
                     case 3:
-                        color = glm::vec3(0.0f, 0.7f, 0.0f);
+                        color = glm::vec4(0.0f, 0.7f, 0.0f,1.0f);
                         break;
                     case 4:
-                        color = glm::vec3(0.8f, 0.8f, 0.4f);
+                        color = glm::vec4(0.8f, 0.8f, 0.4f,1.0f);
                         break;
                     case 5:
-                        color = glm::vec3(1.0f, 0.5f, 0.0f);
+                        color = glm::vec4(1.0f, 0.5f, 0.0f,1.0f);
                         break;
                 }
                 bricks.push_back(Brick(pos,size,color,SpriteManager::getSprite("block")));
@@ -156,5 +156,5 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
     ball = Ball(ballPosition,glm::vec2(100.0f,-350.0f),SpriteManager::getSprite("ball"));
 
     //Inicia el generador de particulas
-    ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),100,SpriteManager::getSprite("particle"));
+    ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),250,SpriteManager::getSprite("particle"));
 }

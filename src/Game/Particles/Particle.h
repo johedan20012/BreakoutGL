@@ -11,7 +11,7 @@ class Particle : public GameObject{
 
     public:
         Particle() = default;
-        Particle(glm::vec2 position,float rotation,glm::vec2 size,glm::vec3 color,glm::vec2 velocity,float lifeTime,Texture2D& sprite);
+        Particle(glm::vec2 position,float rotation,glm::vec2 size,glm::vec4 color,glm::vec2 velocity,float lifeTime,Texture2D& sprite);
 
         void update(float deltaTime);
 

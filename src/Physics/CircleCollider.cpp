@@ -22,6 +22,6 @@ void CircleCollider::changeDimensions(glm::vec2 newDimensions){
 }
 
 void CircleCollider::render(Shader& shader){
-    SpriteRenderer::drawSprite(debugSprite,shader,center-glm::vec2(radius,radius),glm::vec2(radius*2.0f,radius*2.0f),0,glm::vec3(1.0f));
+    SpriteRenderer::drawSprite(debugSprite,shader,center-glm::vec2(radius,radius),glm::vec2(radius*2.0f,radius*2.0f),0,glm::vec4(1.0f));
 }
 

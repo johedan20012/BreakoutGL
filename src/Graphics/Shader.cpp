@@ -47,6 +47,10 @@ void Shader::setFloat4(const char* name,float f1,float f2,float f3, float f4){
     glUniform4f(glGetUniformLocation(programId,name),f1,f2,f3,f4);
 }
 
+void Shader::setFloat4(const char* name, glm::vec4 vec){
+    setFloat4(name,vec.x,vec.y,vec.z,vec.w);
+}
+
 void Shader::setFloat4(const char* name,Vector4D vec){
     setFloat4(name,vec.x,vec.y,vec.z,vec.w);
 }

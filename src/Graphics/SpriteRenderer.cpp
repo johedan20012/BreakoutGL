@@ -25,7 +25,7 @@ void SpriteRenderer::init(){
     VAO.unbind();
 }
 
-void SpriteRenderer::drawSprite(Texture2D& texture,Shader& shader,glm::vec2 pos,glm::vec2 size, float rotate, glm::vec3 color){
+void SpriteRenderer::drawSprite(Texture2D& texture,Shader& shader,glm::vec2 pos,glm::vec2 size, float rotate, glm::vec4 color){
     shader.activate();
 
     glm::mat4 model = glm::mat4(1.0f);
@@ -38,7 +38,7 @@ void SpriteRenderer::drawSprite(Texture2D& texture,Shader& shader,glm::vec2 pos,
     model = glm::scale(model, glm::vec3(size, 1.0f)); 
 
     shader.setFloatMat4("model",model);
-    shader.setFloat3("spriteColor",color);
+    shader.setFloat4("spriteColor",color);
 
     glActiveTexture(GL_TEXTURE0);
     texture.bind();

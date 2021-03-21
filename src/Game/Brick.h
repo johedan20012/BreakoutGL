@@ -12,7 +12,7 @@ class Brick : public GameObject{
 
     public:
         Brick() = default;
-        Brick(glm::vec2 position,glm::vec2 size,glm::vec3 color,Texture2D sprite,bool isSolid = false);
+        Brick(glm::vec2 position,glm::vec2 size,glm::vec4 color,Texture2D sprite,bool isSolid = false);
 
         BoxCollider& getHitbox();
 
