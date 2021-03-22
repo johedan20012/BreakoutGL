@@ -42,6 +42,7 @@ void Level::update(float deltaTime){
 
     for(int i = bricks.size()-1; i>=0; i--){
            if(bricks[i].isDestroyed()){
+               noBricks--;
                bricks.erase(bricks.begin()+i);
            } 
     }
@@ -66,7 +67,7 @@ void Level::render(Shader& shader){
 }
 
 bool Level::isCompleted(){
-    return !(bricks.size() > 0);
+    return !(noBricks > 0);
 }
 
 void Level::handleInput(){
@@ -109,6 +110,7 @@ void Level::handleCollisions(){
 
 
 void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth,unsigned int levelHeight){
+    noBricks  = 0;
     unsigned int noRows = tileData.size();
     unsigned int noColumns = tileData[0].size();
     float unitWidth = levelWidth; 
@@ -124,6 +126,8 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
                                        SpriteManager::getSprite("block_solid"),
                                        true));
             }else if(tileData[i][j]>1){
+                noBricks ++;
+
                 glm::vec2 pos(unitWidth*j,unitHeight*i);
                 glm::vec2 size(unitWidth,unitHeight);
 

@@ -2,26 +2,44 @@
 #define GAME_H
 
 #include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <glad/glad.h> //Maneja las direcciones de las funciones de OpenGl, siempre incluir antes de GLFW
+#include <GLFW/glfw3.h> //Maneja la creación de ventana , i/0, etc.
 
-enum class GameState{
-    ACTIVE,MENU,WIN
-};
+// Libreria para matematicas
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <stdlib.h>
+#include <time.h>       
+
+#include "Screens/PlayScreen.h"
+
+#include "../IO/Mouse.h"
+#include "../IO/Keyboard.h"
+
+#include "../Graphics/ShaderManager.h"
+#include "../Graphics/SpriteManager.h"
 
 class Game{
     private:
-        GameState state;
+        static int screenWidth,screenHeight;
 
-        int screenWidth,screenHeight;
+        float deltaTime  = 0.0f;
+        float lastFrame = 0.0f;
+
+        Screen* screen = nullptr;
+
+        GLFWwindow* window = nullptr;
     public:
-        Game();
+        Game() = default;
 
-        void init();
+        int init();
 
-        void update();
+        void run();
 
-        void render();
+        void cleanup();
+    private:
+        static void framebufferSizeCallback(GLFWwindow* window,int witdh, int height);
 };
 
 #endif

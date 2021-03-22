@@ -17,7 +17,7 @@
 class Level{
     private:
         std::vector<Brick> bricks;
-        
+        int noBricks;
         Player player;
 
         Ball ball;

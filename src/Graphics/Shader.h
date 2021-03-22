@@ -17,7 +17,9 @@ class Shader{
         unsigned int programId;
 
     public:
-        Shader(const char* vertexShaderFilename,const char* fragmentShaderFilename);
+        Shader() = default;
+
+        void load(const char* vertexShaderFilename,const char* fragmentShaderFilename);
 
         void activate(); 
 

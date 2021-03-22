@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-Shader::Shader(const char* vertexShaderFilename,const char* fragmentShaderFilename){
+void Shader::load(const char* vertexShaderFilename,const char* fragmentShaderFilename){
     int success;
     char infoLog[512];
     //Crear el vertex y fragment shader
