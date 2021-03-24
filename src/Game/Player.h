@@ -30,6 +30,7 @@ class Player : public GameObject{
         unsigned int getScore();
 
         bool isSticky();
+        bool hasLasers();
 
         void applyModifier(ModifierType modifier);
 

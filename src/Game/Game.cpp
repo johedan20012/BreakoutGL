@@ -57,6 +57,7 @@ int Game::init(){
     SpriteManager::loadSprite("assets/textures/Power4.png","pow4",false);
     SpriteManager::loadSprite("assets/textures/Power5.png","pow5",false);
     SpriteManager::loadSprite("assets/textures/particle.png","particle",false);
+    SpriteManager::loadSprite("assets/textures/laser.png","laser",false);
 
     SpriteManager::loadSprite("assets/textures/debug/circleCollider.png","DEBUG_1",false);
     SpriteManager::loadSprite("assets/textures/debug/boxCollider.png","DEBUG_2",false);
@@ -93,6 +94,7 @@ void Game::run(){
         //Render
         screen->render();
         
+        Keyboard::reset();
         // Checa eventos e intercambia los buffers
         glfwPollEvents(); //Checa eventos de mouse,teclado,joystick,etc. y llama a los callbacks necesarios
         glfwSwapBuffers(window); //Cambia el buffer de color y lo "pone" en la pantalla, esto es usar doble buffer

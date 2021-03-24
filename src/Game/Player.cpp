@@ -29,6 +29,10 @@ bool Player::isSticky(){
     return sticky;
 }
 
+bool Player::hasLasers(){
+    return lasers;
+}
+
 void Player::applyModifier(ModifierType modifier){
     switch (modifier)
     {

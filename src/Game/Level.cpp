@@ -38,6 +38,10 @@ void Level::update(float deltaTime){
 
     ballParticles.update(ball,deltaTime);
 
+    for(int i =0; i<NUM_LASERS; i++){
+        lasers[i].update(deltaTime);
+    }
+
     handleCollisions();
 
     for(int i = bricks.size()-1; i>=0; i--){
@@ -54,6 +58,11 @@ void Level::render(Shader& shader){
     for(int  i = 0; i<bricks.size(); i++){
         bricks[i].render(shader);
         //bricks[i].getHitbox().render(shader);
+    }
+
+    for(int i =0; i<NUM_LASERS; i++){
+        if(!lasers[i].isActive()) continue;
+        lasers[i].render(shader);
     }
 
     player.render(shader);
@@ -74,6 +83,23 @@ void Level::handleInput(){
     if(Keyboard::keyWentDown(GLFW_KEY_SPACE) == GLFW_PRESS){
         ball.setStuck(false);
     }
+    if(Keyboard::keyWentDown(GLFW_KEY_F) == GLFW_PRESS && player.hasLasers()){
+        int laser1 = -1,laser2 = -1;
+        for(int i=0; i<NUM_LASERS; i++){
+            if(!lasers[i].isActive()){
+                if(laser1 == -1){
+                    laser1 = i;
+                }else{
+                    laser2 = i;
+                    break;
+                }
+            }
+        }
+        if(laser2 != -1){
+            lasers[laser1].launch(player.getPosition()+glm::vec2(0.0f,-15.0f));
+            lasers[laser2].launch(player.getPosition()+glm::vec2(player.getSize().x-20.0f,0.0f));
+        }
+    }
 }
 
 void Level::handleCollisions(){
@@ -82,7 +108,7 @@ void Level::handleCollisions(){
             if(Physics::BoxCircleCollision(bricks[i].getHitbox(),ball.getHitbox())){
                 bricks[i].hit();
                 if(bricks[i].isDestroyed() && !powerUp.isActive()){ //Trata de generar un modificador con tipo aleatorio
-                    int value = rand()%6; // 1 de cada 6 genera un modificador
+                    int value = rand()%2; // 1 de cada 6 genera un modificador
                     if(value == 0){
                         ModifierType type =(ModifierType)(rand()%5);// (ModifierType)(rand()%(int)(ModifierType::NUM_TYPES)); //Randomiza el tipo de mofi
                     
@@ -104,6 +130,19 @@ void Level::handleCollisions(){
         if(Physics::BoxBoxCollision(player.getHitbox(),powerUp.getHitbox())){
             powerUp.desactivate();
             player.applyModifier(powerUp.getType());
+        }
+    }
+    
+    for(int i=0; i<NUM_LASERS; i++){
+        if(lasers[i].isActive()){
+            for(int j=0; j<bricks.size(); j++){
+                if(bricks[j].isDestroyed()) continue;
+                if(Physics::BoxBoxCollision(bricks[j].getHitbox(),lasers[i].getHitbox())){
+                    bricks[j].hit();
+
+                    lasers[i].hit();
+                }
+            }
         }
     }
 }
@@ -161,4 +200,9 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
 
     //Inicia el generador de particulas
     ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),250,SpriteManager::getSprite("particle"));
+
+    //Inicia a los lasers
+    for(int  i=0; i<NUM_LASERS; i++){
+        lasers[i] = Laser(SpriteManager::getSprite("laser"));
+    }
 }

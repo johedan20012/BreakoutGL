@@ -29,3 +29,9 @@ bool Keyboard::keyWentUp(int key) {
 bool Keyboard::keyWentDown(int key) {
 	return keys[key] && keysChanged[key];
 }
+
+void Keyboard::reset(){
+	for(int i=0; i<GLFW_KEY_LAST; i++){
+		keysChanged[i] = false;
+	}
+}

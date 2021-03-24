@@ -1,6 +1,6 @@
 #include "PhysicsFunctions.h"
 
-bool Physics::BoxBoxCollision(BoxCollider& box,BoxCollider& box2){
+bool Physics::BoxBoxCollision(BoxCollider box,BoxCollider box2){
     glm::vec2 rad = box.calculateDimensions() / 2.0f;
     glm::vec2 radOther = box2.calculateDimensions() / 2.0f;
 

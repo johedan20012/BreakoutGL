@@ -14,6 +14,8 @@ class Keyboard{
 		static bool keyWentUp(int key);
 		static bool keyWentDown(int key);
 
+		static void reset();
+
     private:
         static bool keys[];
 		static bool keysChanged[];

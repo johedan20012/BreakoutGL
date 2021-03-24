@@ -9,6 +9,7 @@
 #include "Brick.h"
 #include "Player.h"
 #include "Ball.h"
+#include "Laser.h"
 #include "Modifier.h"
 #include "Particles/ParticleGenerator.h"
 #include "../Graphics/SpriteManager.h"
@@ -19,6 +20,10 @@ class Level{
         std::vector<Brick> bricks;
         int noBricks;
         Player player;
+
+        static const int NUM_LASERS = 6;
+
+        Laser lasers[NUM_LASERS];
 
         Ball ball;
 
