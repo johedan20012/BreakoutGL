@@ -110,7 +110,7 @@ void Level::handleCollisions(){
                 if(bricks[i].isDestroyed() && !powerUp.isActive()){ //Trata de generar un modificador con tipo aleatorio
                     int value = rand()%2; // 1 de cada 6 genera un modificador
                     if(value == 0){
-                        ModifierType type =(ModifierType)(rand()%5);// (ModifierType)(rand()%(int)(ModifierType::NUM_TYPES)); //Randomiza el tipo de mofi
+                        ModifierType type =(ModifierType)(rand()%7);// (ModifierType)(rand()%(int)(ModifierType::NUM_TYPES)); //Randomiza el tipo de mofi
                     
                         powerUp = Modifier(bricks[i].getPosition(),glm::vec2(50.0f,175.0f),type,SpriteManager::getSprite("pow"+std::to_string((int)(type)+1)));
                     }
@@ -130,6 +130,7 @@ void Level::handleCollisions(){
         if(Physics::BoxBoxCollision(player.getHitbox(),powerUp.getHitbox())){
             powerUp.desactivate();
             player.applyModifier(powerUp.getType());
+            ball.applyModifier(powerUp.getType());
         }
     }
     
@@ -196,7 +197,7 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
 
     //Iniciar pelota
     glm::vec2 ballPosition = player.getPosition()+glm::vec2(player.getSize().x/2.0f - 12.5f,-25.0f);
-    ball = Ball(ballPosition,glm::vec2(100.0f,-350.0f),SpriteManager::getSprite("ball"));
+    ball = Ball(ballPosition,364.0f,SpriteManager::getSprite("ball"));
 
     //Inicia el generador de particulas
     ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),250,SpriteManager::getSprite("particle"));

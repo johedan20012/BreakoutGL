@@ -56,6 +56,9 @@ int Game::init(){
     SpriteManager::loadSprite("assets/textures/Power3.png","pow3",false);
     SpriteManager::loadSprite("assets/textures/Power4.png","pow4",false);
     SpriteManager::loadSprite("assets/textures/Power5.png","pow5",false);
+    SpriteManager::loadSprite("assets/textures/Power6.png","pow6",false);
+    SpriteManager::loadSprite("assets/textures/Power7.png","pow7",false);
+    
     SpriteManager::loadSprite("assets/textures/particle.png","particle",false);
     SpriteManager::loadSprite("assets/textures/laser.png","laser",false);
 
