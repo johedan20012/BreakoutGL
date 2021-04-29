@@ -13,12 +13,14 @@
 #include <time.h>       
 
 #include "Screens/PlayScreen.h"
+#include "Screens/StartScreen.h"
 
 #include "../IO/Mouse.h"
 #include "../IO/Keyboard.h"
 
 #include "../Graphics/ShaderManager.h"
 #include "../Graphics/SpriteManager.h"
+#include "../Graphics/TextFont.h"
 
 class Game{
     private:
@@ -26,6 +28,8 @@ class Game{
 
         float deltaTime  = 0.0f;
         float lastFrame = 0.0f;
+
+        TextFont fuente;
 
         Screen* screen = nullptr;
 

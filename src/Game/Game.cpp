@@ -16,7 +16,7 @@ int Game::init(){
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
-    window = glfwCreateWindow(screenWidth,screenHeight, "Hola OpenGL", NULL, NULL);
+    window = glfwCreateWindow(screenWidth,screenHeight, "BreakoutGL", NULL, NULL);
     if(window == NULL){
         std::cout << "No se pudo crear la ventana GLFW\n";
         glfwTerminate();
@@ -24,6 +24,8 @@ int Game::init(){
     }
 
     glfwMakeContextCurrent(window);
+
+    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
 
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         std::cout << "No se pudo iniciar GLAD\n";
@@ -45,6 +47,8 @@ int Game::init(){
     SpriteRenderer::init();
 
     // =================== Texturas ==============================
+    SpriteManager::loadSprite("assets/textures/logoInicio.png","INICIO_nombre",false);
+    
     SpriteManager::loadSprite("assets/textures/block_solid.png","block_solid",false);
     SpriteManager::loadSprite("assets/textures/block.png","block",false);
     SpriteManager::loadSprite("assets/textures/background.jpg","background",false);
@@ -64,8 +68,27 @@ int Game::init(){
 
     SpriteManager::loadSprite("assets/textures/debug/circleCollider.png","DEBUG_1",false);
     SpriteManager::loadSprite("assets/textures/debug/boxCollider.png","DEBUG_2",false);
+     // =================== SHADERS =============================
+    ShaderManager::loadShader("assets/shaders/2DObject.vs","assets/shaders/2DObject.fs","shader");
+    ShaderManager::loadShader("assets/shaders/text.vs","assets/shaders/text.fs","textShader");
 
-    screen = new PlayScreen();
+    //====================================== Fuentes =============================
+    fuente.init();
+    fuente.loadFont("assets/fonts/OCRAEXT.TTF",24);
+
+    //Poner los uniforms
+    glm::mat4 projection = glm::ortho(0.0f,800.0f,600.0f,0.0f,-1.0f,1.0f);
+    Shader& shader = ShaderManager::getShader("shader");
+    shader.activate();
+    shader.setInt("image",0);
+    shader.setFloatMat4("projection",projection);
+
+    Shader& textShader = ShaderManager::getShader("textShader");
+    textShader.activate();
+    textShader.setInt("textImage",0);
+    textShader.setFloatMat4("projection",projection);
+
+    screen = new StartScreen(fuente);
     screen->init();
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); wireframe mode
     return 0;
@@ -86,8 +109,18 @@ void Game::run(){
         //Update
         screen->update(deltaTime);
         if(screen->finished()){
-            std::cout <<"Juego terminado\n";
-            glfwSetWindowShouldClose(window,true);
+            switch(screen->getType()){
+                case ScreenType::START_SCREEN:
+                    delete screen;
+                    screen = new PlayScreen(fuente);
+                    screen->init();
+                    break;
+                case ScreenType::PLAY_SCREEN:
+                    delete screen;
+                    screen = new StartScreen(fuente);
+                    screen->init();
+                    break;
+            }
         }
      
         //Comando de render aqui
@@ -98,6 +131,7 @@ void Game::run(){
         screen->render();
         
         Keyboard::reset();
+        Mouse::reset();
         // Checa eventos e intercambia los buffers
         glfwPollEvents(); //Checa eventos de mouse,teclado,joystick,etc. y llama a los callbacks necesarios
         glfwSwapBuffers(window); //Cambia el buffer de color y lo "pone" en la pantalla, esto es usar doble buffer
@@ -110,6 +144,8 @@ void Game::cleanup(){
         delete screen;
         screen = nullptr;
     }
+
+    fuente.cleanup();
 
     ShaderManager::cleanup();
 

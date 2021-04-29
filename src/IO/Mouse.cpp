@@ -75,9 +75,15 @@ bool Mouse::buttonChanged(int button) {
 }
 
 bool Mouse::buttonWentUp(int button) {
-	return !buttons[button] && buttonsChanged[button];;
+	return !buttons[button] && buttonsChanged[button];
 } 
 
 bool Mouse::buttonWentDown(int button) {
-	return buttons[button] && buttonsChanged[button];;
+	return buttons[button] && buttonsChanged[button];
+}
+
+void Mouse::reset(){
+	for(unsigned int i=0; i<GLFW_MOUSE_BUTTON_LAST; i++){
+		buttonsChanged[i] = false;
+	}
 }

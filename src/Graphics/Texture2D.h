@@ -14,6 +14,7 @@ class Texture2D{
         void generate();
 
         void loadFile(const char* filename,bool flip = true);
+        void loadData(int width,int height,void* data);
 
         void bind();
 

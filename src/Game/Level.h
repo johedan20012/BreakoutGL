@@ -5,6 +5,9 @@
 #include <string>
 #include <sstream>
 #include <stdlib.h> 
+#include <time.h>
+
+#include <glm/gtc/noise.hpp>
 
 #include "Brick.h"
 #include "Player.h"
@@ -12,8 +15,12 @@
 #include "Laser.h"
 #include "Modifier.h"
 #include "Particles/ParticleGenerator.h"
-#include "../Graphics/SpriteManager.h"
+
 #include "../Physics/PhysicsFunctions.h"
+
+#include "../Graphics/ShaderManager.h"
+#include "../Graphics/SpriteManager.h"
+#include "../Graphics/TextFont.h"
 
 class Level{
     private:
@@ -31,10 +38,13 @@ class Level{
 
         ParticleGenerator ballParticles;
 
+        TextFont fuente;
     public:
         Level();
 
-        void load(const char* file,unsigned int levelWidth,unsigned int levelHeight);
+        void load(const char* file,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente);
+
+        void load(unsigned int noRows,unsigned int noColumns,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente);
 
         void update(float deltaTime);
 

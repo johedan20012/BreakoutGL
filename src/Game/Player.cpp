@@ -2,7 +2,7 @@
 
 Player::Player(Texture2D& sprite)
     : GameObject(glm::vec2(350.0f,580.0f),0,PLAYER_INITIAL_SIZE,glm::vec4(1.0f),glm::vec2(500.0f,0.0f),sprite)
-    , lives(3),sticky(false),lasers(false),sizeBar(1),score(0){ 
+    , lives(3),sticky(false),lasers(false),sizeBar(1),score(0),mouseOldPosX(Mouse::getMouseX()){ 
         hitbox = BoxCollider(glm::vec2(350.0f,580.0f),glm::vec2(100.0f,20.0f));
 }
 
@@ -78,22 +78,27 @@ void Player::applyModifier(ModifierType modifier){
     hitbox.moveTo(position);
 }
 
+void Player::loseLive(){
+    if(lives > 0) lives --;
+}
+
+unsigned int Player::getLives(){
+    return lives;
+}
+
+bool Player::gameover(){
+    return (lives == 0);
+}
+
 void Player::handleInput(float deltaTime){
-    float realXVelocity = velocity.x * deltaTime;
+    float mouseNewPosX = Mouse::getMouseX();
 
-    if(Keyboard::key(GLFW_KEY_LEFT) == GLFW_PRESS || Keyboard::key(GLFW_KEY_A) == GLFW_PRESS){
-        //Mover a la izquierda
-        position.x -= realXVelocity;
-        if(position.x < 0.0f){
-            position.x = 0.0f;
-        }
-    }
+    position.x += mouseNewPosX - mouseOldPosX;
+    mouseOldPosX = mouseNewPosX;
 
-    if(Keyboard::key(GLFW_KEY_RIGHT) == GLFW_PRESS || Keyboard::key(GLFW_KEY_D) == GLFW_PRESS){
-        //Mover a la derecha
-        position.x += realXVelocity;
-        if(position.x > 800.0f-size.x){
-            position.x = 800.0f-size.x;
-        }
+    if(position.x > 800.0f-size.x){
+        position.x = 800.0f-size.x;
+    }else if(position.x < 0.0f){
+        position.x = 0.0f;
     }
 }

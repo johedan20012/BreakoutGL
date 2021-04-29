@@ -2,7 +2,9 @@
 
 Level::Level(){}
 
-void Level::load(const char* filename,unsigned int levelWidth,unsigned int levelHeight){
+void Level::load(const char* filename,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente){
+    this->fuente = fuente;
+    
     std::ifstream file;
     std::string line;
     std::vector<std::vector<unsigned int>>tileData;
@@ -27,6 +29,8 @@ void Level::load(const char* filename,unsigned int levelWidth,unsigned int level
     file.close();
 }
 
+
+
 void Level::update(float deltaTime){
     handleInput();
 
@@ -50,15 +54,33 @@ void Level::update(float deltaTime){
                bricks.erase(bricks.begin()+i);
            } 
     }
+
+    if(ball.isDead()){
+        player.loseLive();
+        if(!player.gameover())
+            ball.reset(364.0f);
+    }
 }
 
 void Level::render(Shader& shader){
+
     ballParticles.render(shader);
+    
+    /*glm::mat4 view = glm::mat4(1.0f);
+    view = glm::translate(view, glm::vec3(400.0f,300.0f,0.0f));
+
+    //view = glm::translate(view, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); //Esto traslada el centro del objeto a la mitad del mismo, asi el objeto rota sobre su propio centro
+    view = glm::rotate(view, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)); 
+    //view = glm::translate(view, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); //Devuelve todo a como estaba
+    view = glm::translate(view, glm::vec3(-400.0f,-300.0f,0.0f));
+    shader.setFloatMat4("view",view); */
 
     for(int  i = 0; i<bricks.size(); i++){
         bricks[i].render(shader);
         //bricks[i].getHitbox().render(shader);
     }
+
+    //shader.setFloatMat4("view",glm::mat4(1.0f));
 
     for(int i =0; i<NUM_LASERS; i++){
         if(!lasers[i].isActive()) continue;
@@ -73,17 +95,23 @@ void Level::render(Shader& shader){
     if(powerUp.isActive()){
         powerUp.render(shader);
     }
+
+    //Renderizar los puntos y vidas del jugador
+    std::stringstream ss,ss2; ss << player.getLives();
+    fuente.renderText("Vidas: "+ss.str(),glm::vec2(5.0f,5.0f),1.0f,ShaderManager::getShader("textShader"));
+    ss2<<player.getScore();
+    fuente.renderText("Puntos: "+ss2.str(),glm::vec2(600.0f,5.0f),1.0f,ShaderManager::getShader("textShader")); //Si alguien ve esto no lo replique porfavor esta mal
 }
 
 bool Level::isCompleted(){
-    return !(noBricks > 0);
+    return noBricks <= 0 || player.gameover();
 }
 
 void Level::handleInput(){
-    if(Keyboard::keyWentDown(GLFW_KEY_SPACE) == GLFW_PRESS){
+    if(Mouse::buttonWentDown(GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
         ball.setStuck(false);
     }
-    if(Keyboard::keyWentDown(GLFW_KEY_F) == GLFW_PRESS && player.hasLasers()){
+    if(Mouse::buttonWentDown(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && player.hasLasers()){
         int laser1 = -1,laser2 = -1;
         for(int i=0; i<NUM_LASERS; i++){
             if(!lasers[i].isActive()){
@@ -103,7 +131,7 @@ void Level::handleInput(){
 }
 
 void Level::handleCollisions(){
-    if(!ball.isStuck()){
+    if(!ball.isStuck() && !ball.isDead()){
         for(int i=0; i<bricks.size(); i++){
             if(Physics::BoxCircleCollision(bricks[i].getHitbox(),ball.getHitbox())){
                 bricks[i].hit();
@@ -120,7 +148,7 @@ void Level::handleCollisions(){
         }
     }
 
-    if(!ball.isStuck()){
+    if(!ball.isStuck() && !ball.isDead()){
         if(Physics::BoxCircleCollision(player.getHitbox(),ball.getHitbox())){
             ball.hitPlayer();
         }
@@ -159,13 +187,14 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
     unitHeight /= noRows;
     for(int i = 0; i<noRows; i++){
         for(int j= 0; j<noColumns; j++){
-            if(tileData[i][j]==1){ //Labrillo solido
+            if(tileData[i][j]==5){ //Labrillo solido
                 bricks.push_back(Brick(glm::vec2(unitWidth*j,unitHeight*i),
                                        glm::vec2(unitWidth,unitHeight),
-                                       glm::vec4(0.8f,0.8f,0.7f,1.0f),
+                                       //glm::vec4(0.8f,0.8f,0.7f,1.0f),
+                                       glm::vec4(1.0f,1.0f,1.0f,1.0f),
                                        SpriteManager::getSprite("block_solid"),
                                        true));
-            }else if(tileData[i][j]>1){
+            }else if(tileData[i][j]>=1){
                 noBricks ++;
 
                 glm::vec2 pos(unitWidth*j,unitHeight*i);
@@ -173,17 +202,21 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
 
                 glm::vec4 color(1.0f);
                 switch (tileData[i][j]){
+                    case 1:
+                        //color = glm::vec4(0.2f, 0.6f, 1.0f,1.0f);
+                        color = glm::vec4(0.2f,0.2f,0.2f,1.0f);
+                        break;
                     case 2:
-                        color = glm::vec4(0.2f, 0.6f, 1.0f,1.0f);
+                        //color = glm::vec4(0.0f, 0.7f, 0.0f,1.0f);
+                        color = glm::vec4(0.4f,0.4f,0.4f,1.0f);
                         break;
                     case 3:
-                        color = glm::vec4(0.0f, 0.7f, 0.0f,1.0f);
+                        //color = glm::vec4(0.8f, 0.8f, 0.4f,1.0f);
+                        color = glm::vec4(0.6f,0.6f,0.6f,1.0f);
                         break;
                     case 4:
-                        color = glm::vec4(0.8f, 0.8f, 0.4f,1.0f);
-                        break;
-                    case 5:
-                        color = glm::vec4(1.0f, 0.5f, 0.0f,1.0f);
+                        //color = glm::vec4(1.0f, 0.5f, 0.0f,1.0f);
+                        color = glm::vec4(0.8f,0.8f,0.8f,1.0f);
                         break;
                 }
                 bricks.push_back(Brick(pos,size,color,SpriteManager::getSprite("block")));
@@ -203,6 +236,7 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
     ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),250,SpriteManager::getSprite("particle"));
 
     //Inicia a los lasers
+    Laser::setPlayer(&player);
     for(int  i=0; i<NUM_LASERS; i++){
         lasers[i] = Laser(SpriteManager::getSprite("laser"));
     }

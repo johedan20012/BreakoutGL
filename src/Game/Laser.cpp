@@ -1,5 +1,7 @@
 #include "Laser.h"
 
+Player* Laser::player = nullptr;
+
 Laser::Laser(Texture2D& sprite)
     :GameObject(glm::vec2(0.0f),0,glm::vec2(15.0f,25.0f),glm::vec4(1.0f),glm::vec2(0.0f,-550.0f),sprite)
     ,active(false),hitbox(BoxCollider(glm::vec2(0.0f),glm::vec2(15.0f,25.0f))){}
@@ -30,4 +32,9 @@ void Laser::update(float deltaTime){
 
 void Laser::hit(){
     active = false;
+    player->addScore(10);
+}
+
+void Laser::setPlayer(Player* p){
+    player = p;
 }

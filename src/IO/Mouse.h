@@ -24,6 +24,8 @@ class Mouse{
 		static bool buttonWentUp(int button);
 		static bool buttonWentDown(int button);
 
+		static void reset();
+
     private:
         static double x;
 		static double y;
@@ -38,7 +40,7 @@ class Mouse{
 		static double scrollDY;
 
 		static bool buttons[];
-		static bool buttonsChanged[];
+		static bool buttonsChanged[];		
 
         Mouse(); //Clase estatica
 };

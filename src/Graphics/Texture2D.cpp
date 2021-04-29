@@ -29,7 +29,7 @@ void Texture2D::loadFile(const char* filename,bool flip){
 
     //Especifica la forma en que se trata una coordenada de textura fuera del rango [0,1] por eje, en este caso es para una textura 2D
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_MIRRORED_REPEAT); 
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_MIRRORED_REPEAT); 
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_MIRRORED_REPEAT); 
 
     //Especifica el filtro de textura, para "min" cuando se "reduce" la textura y "mag" al contrario
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -44,6 +44,20 @@ void Texture2D::loadFile(const char* filename,bool flip){
         std::cout << "No se pudo cargar la textura\n"<<filename<<"\n";
     }
     stbi_image_free(data); //Libera los datos de la imagen, ya que ahora estan en la GPU
+}
+
+void Texture2D::loadData(int width,int height,void* data){
+    glBindTexture(GL_TEXTURE_2D,textureId);
+
+    //Especifica la forma en que se trata una coordenada de textura fuera del rango [0,1] por eje, en este caso es para una textura 2D
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE); 
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE); 
+
+    //Especifica el filtro de textura, para "min" cuando se "reduce" la textura y "mag" al contrario
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, data);
 }
 
 void Texture2D::bind(){

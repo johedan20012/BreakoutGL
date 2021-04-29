@@ -6,6 +6,7 @@
 #include "../Level.h"
 
 #include "../../Graphics/ShaderManager.h"
+#include "../../Graphics/TextFont.h"
 
 enum class PlayState{
     PLAY,
@@ -19,8 +20,10 @@ class PlayScreen : public Screen{
     Level level;
 
     Texture2D background;
+
+    TextFont fuente;
     public:
-        PlayScreen();
+        PlayScreen(TextFont& fuente);
 
         //Metodos de la clase padre
         void init() override;

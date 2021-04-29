@@ -39,6 +39,11 @@ class BufferObject{
             glBufferData(type,noElements*sizeof(T),data,usage);
         }
 
+        template<typename T>
+        void setSubData(GLuint noElements,GLint offset,T* data){
+            glBufferSubData(type,offset,sizeof(T)*noElements,data);
+        }
+
         void bind(){
             glBindBuffer(type,bufferId);
         }

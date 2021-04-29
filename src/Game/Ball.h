@@ -19,6 +19,7 @@ class Ball : public GameObject{
         float velMagnitude;
         static Player* player;
         CircleCollider hitbox;
+        bool dead;
 
     public:
         Ball() = default;
@@ -31,13 +32,15 @@ class Ball : public GameObject{
 
         void update(float deltaTime,unsigned int scrWidth,unsigned int scrHeight);
 
-        void reset(glm::vec2 pos, float velMag);
+        void reset(float velMag);
 
         void hitBrick(BoxCollider& brickHitbox);
 
         void hitPlayer();
 
         void applyModifier(ModifierType modifier);
+
+        bool isDead();
 
     public:
         //Metodos estaticos

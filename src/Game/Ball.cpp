@@ -4,7 +4,7 @@ Player* Ball::player = nullptr;
 
 Ball::Ball(glm::vec2 position,float velMagnitude,Texture2D& sprite)
     : GameObject(position,0,glm::vec2(12.0f,12.0f),glm::vec4(1.0f),INITIAL_BALL_VELOCITY_DIR,sprite)
-    ,diffPosX(0.5f),velMagnitude(velMagnitude), stuck(true){
+    ,diffPosX(0.5f),velMagnitude(velMagnitude), stuck(true),dead(false){
     hitbox = CircleCollider(position,6.0f);
 }
 
@@ -21,6 +21,8 @@ bool Ball::isStuck(){
 }
 
 void Ball::update(float deltaTime,unsigned int scrWidth,unsigned int scrHeight){
+    if(dead) return;
+    
     if(!stuck){ //Actualiza la pelota si no esta atorada
         position += velMagnitude * velocity * deltaTime;
         if(position.x+size.x > scrWidth){
@@ -40,13 +42,20 @@ void Ball::update(float deltaTime,unsigned int scrWidth,unsigned int scrHeight){
         position = player->getPosition()+glm::vec2(posX,-size.y);
     }
 
+    if(position.y > 600.0f-size.y){
+        dead = true;
+    }
+
     hitbox.moveTo(position);
 }
 
-void Ball::reset(glm::vec2 pos,float velMag){
-    position = pos;
+void Ball::reset(float velMag){
+    position = player->getPosition()+glm::vec2(player->getSize().x/2.0f - 12.5f,-25.0f);
+    
     velocity = INITIAL_BALL_VELOCITY_DIR;
     velMagnitude = velMag;
+    stuck = true;
+    dead = false;
 }
 
 void Ball::hitBrick(BoxCollider& brickHitbox){
@@ -88,6 +97,9 @@ void Ball::hitBrick(BoxCollider& brickHitbox){
     }
 
     hitbox.moveTo(position);
+
+    //Suma puntos al score del jugador
+    player->addScore(20);
 }
 
 void Ball::hitPlayer(){
@@ -125,6 +137,10 @@ void Ball::applyModifier(ModifierType modifier){
             //FIXME
             break;
     }
+}
+
+bool Ball::isDead(){
+    return dead;
 }
 
 void Ball::setPlayer(Player* p){
