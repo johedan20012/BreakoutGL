@@ -9,6 +9,8 @@
 
 #include <glm/gtc/noise.hpp>
 
+#include <FastNoiseLite/FastNoiseLite.h>
+
 #include "Brick.h"
 #include "Player.h"
 #include "Ball.h"
@@ -26,7 +28,6 @@ class Level{
     private:
         std::vector<Brick> bricks;
         int noBricks;
-        Player player;
 
         static const int NUM_LASERS = 6;
 
@@ -39,12 +40,14 @@ class Level{
         ParticleGenerator ballParticles;
 
         TextFont fuente;
+
+        static Player* player;
     public:
-        Level();
+        Level() = default;
 
         void load(const char* file,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente);
 
-        void load(unsigned int noRows,unsigned int noColumns,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente);
+        void load(unsigned int noRows,unsigned int noColumns,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente,bool noise=true);
 
         void update(float deltaTime);
 
@@ -58,6 +61,10 @@ class Level{
         void handleCollisions();
 
         void init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth,unsigned int levelHeight);
+
+    //Metodos estaticos
+    public:
+        static void setPlayer(Player* p);
 };
 
 #endif

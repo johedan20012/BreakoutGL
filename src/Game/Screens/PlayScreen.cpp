@@ -1,11 +1,16 @@
 #include "PlayScreen.h"
 
 PlayScreen::PlayScreen(TextFont& fuente)
-    :state(PlayState::PLAY),numLevel(1),level(),fuente(fuente),Screen(ScreenType::PLAY_SCREEN){}
+    :state(PlayState::PLAY),numLevel(1),fuente(fuente),Screen(ScreenType::PLAY_SCREEN){}
 
 void PlayScreen::init(){
     
-    level.load("assets/levels/test.txt",800,300,fuente);
+    //level.load("assets/levels/test.txt",800,300,fuente);
+    player = Player(SpriteManager::getSprite("bar"));
+    Level::setPlayer(&player);
+    //Intento de nivel aleatorio
+    level = Level();
+    level.load(20,25,800,400,fuente,false);
 
     background = SpriteManager::getSprite("background");
 }
@@ -18,12 +23,14 @@ void PlayScreen::update(float deltaTime){
     if(state == PlayState::PLAY){
         level.update(deltaTime);
 
+        
         if(level.isCompleted()){
             //Cambiar de nivel
             numLevel++;
-            //DELETE THIS -> 
+            level = Level();
+            level.load(20,25,800,400,fuente,false);
+        }else if(player.gameover()){
             state = PlayState::GAMEOVER;
-            //FIXME
         }
     }
 }
@@ -32,6 +39,13 @@ void PlayScreen::render(){
     Shader& shader = ShaderManager::getShader("shader");
     SpriteRenderer::drawSprite(background,shader,glm::vec2(0.0f,0.0f),glm::vec2(800.0f,600.0f),0,glm::vec4(1.0f));
     level.render(shader);
+
+    //Renderizar los puntos y vidas del jugador
+    std::stringstream ss,ss2; ss << player.getLives();
+    fuente.renderText("Vidas: "+ss.str(),glm::vec2(5.0f,5.0f),1.0f,ShaderManager::getShader("textShader"));
+    ss2<<player.getScore();
+    fuente.renderText("Puntos: "+ss2.str(),glm::vec2(600.0f,5.0f),1.0f,ShaderManager::getShader("textShader")); //Si alguien ve esto no lo replique porfavor esta mal
+
     if(state == PlayState::PAUSE){
         //Renderizar la pantalla de pausa
         //FIXME
@@ -52,5 +66,10 @@ void PlayScreen::handleInput(){
         }else if(state == PlayState::PAUSE){
             state = PlayState::PLAY;
         }
+    }
+
+    if(Keyboard::keyWentDown(GLFW_KEY_R) == GLFW_PRESS){
+        level = Level();
+        level.load(20,25,800,400,fuente,false);
     }
 }

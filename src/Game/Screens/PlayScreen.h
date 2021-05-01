@@ -5,6 +5,8 @@
 
 #include "../Level.h"
 
+#include "../Player.h"
+
 #include "../../Graphics/ShaderManager.h"
 #include "../../Graphics/TextFont.h"
 
@@ -21,6 +23,8 @@ class PlayScreen : public Screen{
 
     Texture2D background;
 
+    Player player;
+
     TextFont fuente;
     public:
         PlayScreen(TextFont& fuente);
@@ -33,7 +37,6 @@ class PlayScreen : public Screen{
         void render() override;
 
         bool finished() override;
-
     private:
         void handleInput();
 };  

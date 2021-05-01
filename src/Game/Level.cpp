@@ -1,6 +1,6 @@
 #include "Level.h"
 
-Level::Level(){}
+Player* Level::player = nullptr; 
 
 void Level::load(const char* filename,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente){
     this->fuente = fuente;
@@ -29,12 +29,73 @@ void Level::load(const char* filename,unsigned int levelWidth,unsigned int level
     file.close();
 }
 
+void Level::load(unsigned int noRows,unsigned int noColumns,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente,bool noise){
+    this->fuente = fuente;
+    std::vector<std::vector<unsigned int>>tileData;
+    unsigned int tileCode;
 
+    if(noise){
+        float factorX = 1.0f / (noColumns - 1);
+        float factorY = 1.0f / (noRows-1);
+
+        float freq = 8;
+
+        FastNoiseLite noise;
+        noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+        noise.SetSeed((int)time(NULL));
+
+        for(unsigned int i = 0; i<noRows; i++){
+            std::vector<unsigned int> row;
+            for(int j=0; j<noColumns; j++){
+                float x = factorX * j;
+                float y = factorY * i;
+                
+                glm::vec2 p (x*freq,y*freq);
+                float result = (noise.GetNoise(p.x,p.y) +1.0f)/2.0f; //result \in [0,1]
+                result = result*10-4;
+                int code = (int)result; 
+
+                if(code > 5) code = 5;
+                if(code < 0) code = 0;
+                row.push_back(code);
+            }
+            tileData.push_back(row);
+        }
+    }else{
+        //Poner semillas
+        int noSeeds = 1;
+        std::vector<glm::vec2> seeds; 
+        for(int i = 0; i<noSeeds; i++){
+            seeds.push_back(glm::vec2((float)(rand()%noColumns),(float)(rand()%noRows)));
+        }
+        //Poner los datos en la matriz
+        for(int i = 0; i<noRows; i++){
+            std::vector<unsigned int> row;
+            for(int j = 0; j<noColumns; j++){
+                unsigned int code = 0;
+                for(int k = 0; k<noSeeds; k++){
+                    //Calcula la taxi-distancia de la casilla (j,i) a la k-esima semilla
+                    int taxiDistance = abs(j-seeds[k].x)+abs(i-seeds[k].y);
+                    int newCode = 5-taxiDistance;
+                    if(newCode < 0) newCode = 0;
+                    if(newCode > code){
+                        code = newCode;
+                    }
+                }
+
+                row.push_back(code);
+            }
+            tileData.push_back(row);
+        }
+    }
+
+    init(tileData,levelWidth,levelHeight);
+}
 
 void Level::update(float deltaTime){
     handleInput();
 
-    player.update(deltaTime);
+    player->update(deltaTime);
 
     powerUp.update(deltaTime);
 
@@ -56,8 +117,8 @@ void Level::update(float deltaTime){
     }
 
     if(ball.isDead()){
-        player.loseLive();
-        if(!player.gameover())
+        player->loseLive();
+        if(!player->gameover())
             ball.reset(364.0f);
     }
 }
@@ -65,29 +126,18 @@ void Level::update(float deltaTime){
 void Level::render(Shader& shader){
 
     ballParticles.render(shader);
-    
-    /*glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(400.0f,300.0f,0.0f));
-
-    //view = glm::translate(view, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); //Esto traslada el centro del objeto a la mitad del mismo, asi el objeto rota sobre su propio centro
-    view = glm::rotate(view, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)); 
-    //view = glm::translate(view, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); //Devuelve todo a como estaba
-    view = glm::translate(view, glm::vec3(-400.0f,-300.0f,0.0f));
-    shader.setFloatMat4("view",view); */
 
     for(int  i = 0; i<bricks.size(); i++){
         bricks[i].render(shader);
         //bricks[i].getHitbox().render(shader);
     }
 
-    //shader.setFloatMat4("view",glm::mat4(1.0f));
-
     for(int i =0; i<NUM_LASERS; i++){
         if(!lasers[i].isActive()) continue;
         lasers[i].render(shader);
     }
 
-    player.render(shader);
+    player->render(shader);
     //player.getHitbox().render(shader);
 
     ball.render(shader);
@@ -95,23 +145,17 @@ void Level::render(Shader& shader){
     if(powerUp.isActive()){
         powerUp.render(shader);
     }
-
-    //Renderizar los puntos y vidas del jugador
-    std::stringstream ss,ss2; ss << player.getLives();
-    fuente.renderText("Vidas: "+ss.str(),glm::vec2(5.0f,5.0f),1.0f,ShaderManager::getShader("textShader"));
-    ss2<<player.getScore();
-    fuente.renderText("Puntos: "+ss2.str(),glm::vec2(600.0f,5.0f),1.0f,ShaderManager::getShader("textShader")); //Si alguien ve esto no lo replique porfavor esta mal
 }
 
 bool Level::isCompleted(){
-    return noBricks <= 0 || player.gameover();
+    return (noBricks <= 0);
 }
 
 void Level::handleInput(){
     if(Mouse::buttonWentDown(GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
         ball.setStuck(false);
     }
-    if(Mouse::buttonWentDown(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && player.hasLasers()){
+    if(Mouse::buttonWentDown(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && player->hasLasers()){
         int laser1 = -1,laser2 = -1;
         for(int i=0; i<NUM_LASERS; i++){
             if(!lasers[i].isActive()){
@@ -124,8 +168,8 @@ void Level::handleInput(){
             }
         }
         if(laser2 != -1){
-            lasers[laser1].launch(player.getPosition()+glm::vec2(0.0f,-15.0f));
-            lasers[laser2].launch(player.getPosition()+glm::vec2(player.getSize().x-20.0f,0.0f));
+            lasers[laser1].launch(player->getPosition()+glm::vec2(0.0f,-15.0f));
+            lasers[laser2].launch(player->getPosition()+glm::vec2(player->getSize().x-20.0f,0.0f));
         }
     }
 }
@@ -149,15 +193,15 @@ void Level::handleCollisions(){
     }
 
     if(!ball.isStuck() && !ball.isDead()){
-        if(Physics::BoxCircleCollision(player.getHitbox(),ball.getHitbox())){
+        if(Physics::BoxCircleCollision(player->getHitbox(),ball.getHitbox())){
             ball.hitPlayer();
         }
     }
 
     if(powerUp.isActive()){
-        if(Physics::BoxBoxCollision(player.getHitbox(),powerUp.getHitbox())){
+        if(Physics::BoxBoxCollision(player->getHitbox(),powerUp.getHitbox())){
             powerUp.desactivate();
-            player.applyModifier(powerUp.getType());
+            player->applyModifier(powerUp.getType());
             ball.applyModifier(powerUp.getType());
         }
     }
@@ -225,19 +269,22 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
     }
 
     //Iniciar jugador
-    player = Player(SpriteManager::getSprite("bar"));
-    Ball::setPlayer(&player);
+    Ball::setPlayer(player);
 
     //Iniciar pelota
-    glm::vec2 ballPosition = player.getPosition()+glm::vec2(player.getSize().x/2.0f - 12.5f,-25.0f);
+    glm::vec2 ballPosition = player->getPosition()+glm::vec2(player->getSize().x/2.0f - 12.5f,-25.0f);
     ball = Ball(ballPosition,364.0f,SpriteManager::getSprite("ball"));
 
     //Inicia el generador de particulas
     ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),250,SpriteManager::getSprite("particle"));
 
     //Inicia a los lasers
-    Laser::setPlayer(&player);
+    Laser::setPlayer(player);
     for(int  i=0; i<NUM_LASERS; i++){
         lasers[i] = Laser(SpriteManager::getSprite("laser"));
     }
+}
+
+void Level::setPlayer(Player* p){
+    player = p;
 }
