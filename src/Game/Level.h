@@ -19,6 +19,7 @@
 #include "Particles/ParticleGenerator.h"
 
 #include "../Physics/PhysicsFunctions.h"
+#include "../Physics/PhysicsManager.h"
 
 #include "../Graphics/ShaderManager.h"
 #include "../Graphics/SpriteManager.h"
@@ -26,7 +27,7 @@
 
 class Level{
     private:
-        std::vector<Brick> bricks;
+        std::vector<Brick*> bricks;
         int noBricks;
 
         static const int NUM_LASERS = 6;
@@ -44,6 +45,7 @@ class Level{
         static Player* player;
     public:
         Level() = default;
+        ~Level();
 
         void load(const char* file,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente);
 
@@ -62,6 +64,7 @@ class Level{
 
         void init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth,unsigned int levelHeight);
 
+        void clearBricks();
     //Metodos estaticos
     public:
         static void setPlayer(Player* p);

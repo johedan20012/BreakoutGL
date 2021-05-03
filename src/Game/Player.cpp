@@ -2,19 +2,15 @@
 
 Player::Player(Texture2D& sprite)
     : GameObject(glm::vec2(350.0f,580.0f),0,PLAYER_INITIAL_SIZE,glm::vec4(1.0f),glm::vec2(500.0f,0.0f),sprite)
-    , lives(3),sticky(false),lasers(false),sizeBar(1),score(0),mouseOldPosX(Mouse::getMouseX()){ 
-        hitbox = BoxCollider(glm::vec2(350.0f,580.0f),glm::vec2(100.0f,20.0f));
-}
+    , PhysicsEntity(new BoxCollider(glm::vec2(350.0f,580.0f),glm::vec2(100.0f,20.0f)),EntityType::PLAYER)
+    , lives(3),sticky(false),lasers(false),sizeBar(1),score(0),mouseOldPosX(Mouse::getMouseX()){ }
 
-BoxCollider& Player::getHitbox(){
-    return hitbox;
-}
 
 void Player::update(float deltaTime){
     //Manejar la entrada
     handleInput(deltaTime);
 
-    hitbox.moveTo(position);
+    hitbox->moveTo(position);
 }
 
 void Player::addScore(unsigned int points){
@@ -74,8 +70,8 @@ void Player::applyModifier(ModifierType modifier){
         sprite = SpriteManager::getSprite("bar");
     }
 
-    hitbox.changeDimensions(size);
-    hitbox.moveTo(position);
+    hitbox->changeDimensions(size);
+    hitbox->moveTo(position);
 }
 
 void Player::loseLive(){
@@ -89,6 +85,8 @@ unsigned int Player::getLives(){
 bool Player::gameover(){
     return (lives == 0);
 }
+
+void Player::hit(PhysicsEntity* otherEntity){}
 
 void Player::handleInput(float deltaTime){
     float mouseNewPosX = Mouse::getMouseX();

@@ -3,22 +3,20 @@
 
 #include "GameObject.h"
 #include "../Physics/BoxCollider.h"
+#include "../Physics/PhysicsEntity.h"
 
-class Brick : public GameObject{
+class Brick : public GameObject, public PhysicsEntity{
     private:
         bool isSolid;
         bool destroyed;
-        BoxCollider hitbox;
 
     public:
         Brick() = default;
         Brick(glm::vec2 position,glm::vec2 size,glm::vec4 color,Texture2D sprite,bool isSolid = false);
 
-        BoxCollider& getHitbox();
-
         bool isDestroyed();
 
-        void hit();
+        void hit(PhysicsEntity* otherEntity) override;
 };
 
 #endif 

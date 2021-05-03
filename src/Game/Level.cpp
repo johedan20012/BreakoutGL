@@ -2,6 +2,10 @@
 
 Player* Level::player = nullptr; 
 
+Level::~Level(){
+    clearBricks();
+}
+
 void Level::load(const char* filename,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente){
     this->fuente = fuente;
     
@@ -107,14 +111,21 @@ void Level::update(float deltaTime){
         lasers[i].update(deltaTime);
     }
 
+    std::cout<<"Brick(0):"<<static_cast<PhysicsEntity*>(bricks[0])<<"\n";
+
+
+    PhysicsManager::update();
+
     handleCollisions();
 
-    for(int i = bricks.size()-1; i>=0; i--){
-           if(bricks[i].isDestroyed()){
+    /*for(int i = bricks.size()-1; i>=0; i--){
+           if(bricks[i]->isDestroyed()){
+               //PhysicsManager::unregisterEntity(bricks[i]->getId());
+               bricks[i]->setIgnoreCollisions(true);
                noBricks--;
-               bricks.erase(bricks.begin()+i);
+               //bricks.erase(bricks.begin()+i);
            } 
-    }
+    }*/
 
     if(ball.isDead()){
         player->loseLive();
@@ -128,7 +139,7 @@ void Level::render(Shader& shader){
     ballParticles.render(shader);
 
     for(int  i = 0; i<bricks.size(); i++){
-        bricks[i].render(shader);
+        bricks[i]->render(shader);
         //bricks[i].getHitbox().render(shader);
     }
 
@@ -175,6 +186,7 @@ void Level::handleInput(){
 }
 
 void Level::handleCollisions(){
+    /*
     if(!ball.isStuck() && !ball.isDead()){
         for(int i=0; i<bricks.size(); i++){
             if(Physics::BoxCircleCollision(bricks[i].getHitbox(),ball.getHitbox())){
@@ -190,22 +202,24 @@ void Level::handleCollisions(){
                 ball.hitBrick(bricks[i].getHitbox());
             }
         }
-    }
+    }*/
 
+    /*
     if(!ball.isStuck() && !ball.isDead()){
         if(Physics::BoxCircleCollision(player->getHitbox(),ball.getHitbox())){
             ball.hitPlayer();
         }
-    }
-
+    } */
+    /*
     if(powerUp.isActive()){
         if(Physics::BoxBoxCollision(player->getHitbox(),powerUp.getHitbox())){
             powerUp.desactivate();
             player->applyModifier(powerUp.getType());
             ball.applyModifier(powerUp.getType());
         }
-    }
+    }*/
     
+    /*
     for(int i=0; i<NUM_LASERS; i++){
         if(lasers[i].isActive()){
             for(int j=0; j<bricks.size(); j++){
@@ -217,11 +231,14 @@ void Level::handleCollisions(){
                 }
             }
         }
-    }
+    } */
 }
 
 
 void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth,unsigned int levelHeight){
+    //Resetea el manejador de fisicas
+    PhysicsManager::cleanup();
+    
     noBricks  = 0;
     unsigned int noRows = tileData.size();
     unsigned int noColumns = tileData[0].size();
@@ -232,12 +249,14 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
     for(int i = 0; i<noRows; i++){
         for(int j= 0; j<noColumns; j++){
             if(tileData[i][j]==5){ //Labrillo solido
-                bricks.push_back(Brick(glm::vec2(unitWidth*j,unitHeight*i),
+                Brick* newBrick = new Brick(glm::vec2(unitWidth*j,unitHeight*i),
                                        glm::vec2(unitWidth,unitHeight),
                                        //glm::vec4(0.8f,0.8f,0.7f,1.0f),
                                        glm::vec4(1.0f,1.0f,1.0f,1.0f),
                                        SpriteManager::getSprite("block_solid"),
-                                       true));
+                                       true);
+                bricks.push_back(newBrick);
+                PhysicsManager::registerEntity(static_cast<PhysicsEntity*>(newBrick),CollisionLayers::BRICKS);
             }else if(tileData[i][j]>=1){
                 noBricks ++;
 
@@ -263,17 +282,23 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
                         color = glm::vec4(0.8f,0.8f,0.8f,1.0f);
                         break;
                 }
-                bricks.push_back(Brick(pos,size,color,SpriteManager::getSprite("block")));
+                Brick* newBrick = new Brick(pos,size,color,SpriteManager::getSprite("block"));
+                bricks.push_back(newBrick);
+                PhysicsManager::registerEntity(static_cast<PhysicsEntity*>(newBrick),CollisionLayers::BRICKS);
             } //else no se agrega un ladrillo en esa posicion
         }
     }
+    std::cout<<"Brick(0):"<<static_cast<PhysicsEntity*>(bricks[0])<<"\n";
 
     //Iniciar jugador
     Ball::setPlayer(player);
+    PhysicsManager::registerEntity(static_cast<PhysicsEntity*>(player),CollisionLayers::PLAYER);
 
     //Iniciar pelota
     glm::vec2 ballPosition = player->getPosition()+glm::vec2(player->getSize().x/2.0f - 12.5f,-25.0f);
     ball = Ball(ballPosition,364.0f,SpriteManager::getSprite("ball"));
+    PhysicsManager::registerEntity(static_cast<PhysicsEntity*>(&ball),CollisionLayers::PLAYER_OBJECTS);
+    PhysicsManager::registerEntity(static_cast<PhysicsEntity*>(&ball),CollisionLayers::PROYECTILES);
 
     //Inicia el generador de particulas
     ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),250,SpriteManager::getSprite("particle"));
@@ -283,6 +308,14 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
     for(int  i=0; i<NUM_LASERS; i++){
         lasers[i] = Laser(SpriteManager::getSprite("laser"));
     }
+}
+
+void Level::clearBricks(){
+    for(unsigned int i = 0; i<bricks.size(); i++){
+        delete bricks[i];
+        bricks[i] = nullptr;
+    }
+    bricks.clear();
 }
 
 void Level::setPlayer(Player* p){

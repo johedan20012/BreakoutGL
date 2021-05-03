@@ -4,13 +4,9 @@ Player* Ball::player = nullptr;
 
 Ball::Ball(glm::vec2 position,float velMagnitude,Texture2D& sprite)
     : GameObject(position,0,glm::vec2(12.0f,12.0f),glm::vec4(1.0f),INITIAL_BALL_VELOCITY_DIR,sprite)
-    ,diffPosX(0.5f),velMagnitude(velMagnitude), stuck(true),dead(false){
-    hitbox = CircleCollider(position,6.0f);
-}
+    , PhysicsEntity(new CircleCollider(position,6.0f),EntityType::BALL)
+    ,diffPosX(0.5f),velMagnitude(velMagnitude), stuck(true),dead(false){}
 
-CircleCollider& Ball::getHitbox(){
-    return hitbox;
-}
 
 void Ball::setStuck(bool stuck){
     this->stuck = stuck;
@@ -46,7 +42,7 @@ void Ball::update(float deltaTime,unsigned int scrWidth,unsigned int scrHeight){
         dead = true;
     }
 
-    hitbox.moveTo(position);
+    hitbox->moveTo(position);
 }
 
 void Ball::reset(float velMag){
@@ -58,17 +54,49 @@ void Ball::reset(float velMag){
     dead = false;
 }
 
-void Ball::hitBrick(BoxCollider& brickHitbox){
-    glm::vec2 center = hitbox.calculateCenter();
-    glm::vec2 centerOther = brickHitbox.calculateCenter();
-    glm::vec2 halfDimOther = brickHitbox.calculateDimensions() / 2.0f;
+void Ball::hit(PhysicsEntity* otherEntity){
+    if(otherEntity->getType() == EntityType::PLAYER){
+        hitPlayer();
+    }else{ //Golpeó un labrillo
+        hitBrick(static_cast<BoxCollider*>(otherEntity->getHitbox()));
+    }
+}
+
+void Ball::applyModifier(ModifierType modifier){
+    switch (modifier) {
+        case ModifierType::FAST_BALL:
+            velMagnitude = MAX_BALL_VELOCITY;
+            break;
+        
+        case ModifierType::SLOW_BALL:
+            velMagnitude = 364.0f;
+            break;
+        
+        case ModifierType::THROUGH_BALL:
+            //FIXME
+            break;
+        
+        case ModifierType::FIRE_BALL:
+            //FIXME
+            break;
+    }
+}
+
+bool Ball::isDead(){
+    return dead;
+}
+
+void Ball::hitBrick(BoxCollider* brickHitbox){
+    glm::vec2 center = hitbox->calculateCenter();
+    glm::vec2 centerOther = brickHitbox->calculateCenter();
+    glm::vec2 halfDimOther = brickHitbox->calculateDimensions() / 2.0f;
     
-    glm::vec2 difference = hitbox.calculateCenter() - brickHitbox.calculateCenter();
+    glm::vec2 difference = hitbox->calculateCenter() - brickHitbox->calculateCenter();
     glm::vec2 clamped = glm::clamp(difference, -halfDimOther,halfDimOther);
     glm::vec2 closest = centerOther + clamped;
     difference = closest - center;
     
-    float radius = hitbox.calculateDimensions().x / 2.0f;
+    float radius = hitbox->calculateDimensions().x / 2.0f;
 
     glm::vec2 dirDiff = Physics::DirectionVector(difference);
     if (dirDiff.x == 1.0f || dirDiff.x == -1.0f) {
@@ -96,13 +124,11 @@ void Ball::hitBrick(BoxCollider& brickHitbox){
         velMagnitude = MAX_BALL_VELOCITY;
     }
 
-    hitbox.moveTo(position);
-
-    //Suma puntos al score del jugador
-    player->addScore(20);
+    hitbox->moveTo(position);
 }
 
 void Ball::hitPlayer(){
+    if(stuck || dead) return;
     float diff = (position.x-player->getPosition().x) / (player->getSize().x-size.x);
     diff = glm::clamp(diff,0.0f,1.0f);// diff \in [-1,1]
 
@@ -119,30 +145,7 @@ void Ball::hitPlayer(){
     velocity = glm::normalize(velocity);
 }
 
-void Ball::applyModifier(ModifierType modifier){
-    switch (modifier) {
-        case ModifierType::FAST_BALL:
-            velMagnitude = MAX_BALL_VELOCITY;
-            break;
-        
-        case ModifierType::SLOW_BALL:
-            velMagnitude = 364.0f;
-            break;
-        
-        case ModifierType::THROUGH_BALL:
-            //FIXME
-            break;
-        
-        case ModifierType::FIRE_BALL:
-            //FIXME
-            break;
-    }
-}
-
-bool Ball::isDead(){
-    return dead;
-}
-
+// ====================== Metodos estaticos ===================
 void Ball::setPlayer(Player* p){
     player = p;
 }

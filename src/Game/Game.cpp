@@ -88,6 +88,11 @@ int Game::init(){
     textShader.setInt("textImage",0);
     textShader.setFloatMat4("projection",projection);
 
+    PhysicsManager::setLayerCollisionFlags(CollisionLayers::PLAYER,CollisionFlags::PLAYER_OBJECTS);
+    PhysicsManager::setLayerCollisionFlags(CollisionLayers::BRICKS,CollisionFlags::PROYECTILES);
+    PhysicsManager::setLayerCollisionFlags(CollisionLayers::PROYECTILES,CollisionFlags::BRICKS);
+    PhysicsManager::setLayerCollisionFlags(CollisionLayers::PLAYER_OBJECTS,CollisionFlags::PLAYER);
+
     screen = new StartScreen(fuente);
     screen->init();
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); wireframe mode
@@ -146,6 +151,8 @@ void Game::cleanup(){
     }
 
     fuente.cleanup();
+
+    PhysicsManager::cleanup();
 
     ShaderManager::cleanup();
 
