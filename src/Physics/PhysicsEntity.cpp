@@ -1,8 +1,12 @@
 #include "PhysicsEntity.h"
 
-PhysicsEntity::PhysicsEntity(Collider* hitbox,EntityType type,CollisionLayers collisionLayer)
-    :hitbox(hitbox),type(type),ignoreCollisions(false){
+PhysicsEntity::PhysicsEntity(Collider* hitbox,EntityType type,unsigned int collisionTypes)
+    :hitbox(hitbox),type(type)
+    ,collisionTypes(collisionTypes),ignoreCollisions(false),id(0){}
 
+PhysicsEntity::~PhysicsEntity(){
+    if(hitbox == nullptr)delete hitbox;
+    hitbox = nullptr;
 }
 
 Collider* PhysicsEntity::getHitbox(){
@@ -22,8 +26,8 @@ void PhysicsEntity::setIgnoreCollisions(bool flag){
 }
 
 bool PhysicsEntity::checkCollision(PhysicsEntity* otherEntity){
-    if(ignoreCollisions || otherEntity->ignoreCollisions) return false;
-
+    if(ignoreCollisions || otherEntity->ignoreCollisions || !(collisionTypes&(unsigned int)otherEntity->type)) return false;
+    
     if(hitbox->getType() == ColliderType::AABB && otherEntity->hitbox->getType() == ColliderType::AABB){
         return Physics::BoxBoxCollision(*(static_cast<BoxCollider*>(hitbox)),*(static_cast<BoxCollider*>(otherEntity->hitbox)));
     }else if(hitbox->getType() == ColliderType::AABB){ //otherEntity tiene hitbox de tipo Circle

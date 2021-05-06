@@ -3,29 +3,35 @@
 
 #include "Collider.h"
 #include "PhysicsFunctions.h"
-#include "PhysicsManager.h"
 
 enum class EntityType{
-    PLAYER = 0,
-    BALL,
-    LASER,
-    BRICK
+    PLAYER = 0x01,
+    BALL = 0x02,
+    LASER = 0x04,
+    BRICK = 0x08,
+    MODIFIER = 0x10
 };
 
+inline EntityType operator | (EntityType t1,EntityType t2){
+    return static_cast<EntityType>(static_cast<unsigned int>(t1) | static_cast<unsigned int>(t2));
+}
+
 class PhysicsEntity{
-    private:
+
+    protected:
         unsigned int id;
 
         EntityType type;
 
-    protected:
+        unsigned int collisionTypes;
+
         Collider* hitbox;
 
         bool ignoreCollisions;
     
     public:
         PhysicsEntity() = default;
-        PhysicsEntity(Collider* hitbox,EntityType type);
+        PhysicsEntity(Collider* hitbox,EntityType type,unsigned int collisionTypes);
         ~PhysicsEntity();
 
         Collider* getHitbox();

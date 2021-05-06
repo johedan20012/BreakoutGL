@@ -13,6 +13,7 @@ class Screen{ //Clase abstracta para las pantallas del juego
     public:
         Screen() = default;
         Screen(ScreenType type);
+        virtual ~Screen();
 
         ScreenType getType();
 

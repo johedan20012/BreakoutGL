@@ -62,8 +62,11 @@ int Game::init(){
     SpriteManager::loadSprite("assets/textures/Power5.png","pow5",false);
     SpriteManager::loadSprite("assets/textures/Power6.png","pow6",false);
     SpriteManager::loadSprite("assets/textures/Power7.png","pow7",false);
-    
+    SpriteManager::loadSprite("assets/textures/Power8.png","pow8",false);
+    SpriteManager::loadSprite("assets/textures/Power9.png","pow9",false);
+
     SpriteManager::loadSprite("assets/textures/particle.png","particle",false);
+    SpriteManager::loadSprite("assets/textures/particleFire.png","fireParticle",false);
     SpriteManager::loadSprite("assets/textures/laser.png","laser",false);
 
     SpriteManager::loadSprite("assets/textures/debug/circleCollider.png","DEBUG_1",false);
@@ -87,11 +90,6 @@ int Game::init(){
     textShader.activate();
     textShader.setInt("textImage",0);
     textShader.setFloatMat4("projection",projection);
-
-    PhysicsManager::setLayerCollisionFlags(CollisionLayers::PLAYER,CollisionFlags::PLAYER_OBJECTS);
-    PhysicsManager::setLayerCollisionFlags(CollisionLayers::BRICKS,CollisionFlags::PROYECTILES);
-    PhysicsManager::setLayerCollisionFlags(CollisionLayers::PROYECTILES,CollisionFlags::BRICKS);
-    PhysicsManager::setLayerCollisionFlags(CollisionLayers::PLAYER_OBJECTS,CollisionFlags::PLAYER);
 
     screen = new StartScreen(fuente);
     screen->init();

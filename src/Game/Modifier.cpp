@@ -1,25 +1,26 @@
 #include "Modifier.h"
 
+#include "Level.h"
+
+Level* Modifier::level = nullptr;
+
 Modifier::Modifier(glm::vec2 position,glm::vec2 velocity,ModifierType type,Texture2D& sprite)
     :GameObject(position,0,glm::vec2(50.0f,50.0f),glm::vec4(1.0f),velocity,sprite)
-    ,type(type),active(true){
-        hitbox = BoxCollider(position,glm::vec2(50.0f,50.0f));
+    ,PhysicsEntity(new BoxCollider(position,glm::vec2(50.0f,50.0f)),EntityType::MODIFIER,(unsigned int)(EntityType::BRICK))
+    ,modType(type),active(true){
+        id = PhysicsManager::registerEntity(this);
 }
 
-BoxCollider& Modifier::getHitbox(){
-    return hitbox;
+Modifier::~Modifier(){
+    PhysicsManager::unregisterEntity(id);
 }
 
-ModifierType Modifier::getType(){
-    return type;
+ModifierType Modifier::getModType(){
+    return modType;
 }
 
 bool Modifier::isActive(){
     return active;
-}
-
-void Modifier::desactivate(){
-    active = false;
 }
 
 void Modifier::update(float deltaTime){
@@ -36,7 +37,16 @@ void Modifier::update(float deltaTime){
         if(position.y > 600.0f){
             active = false;
         }
-    }
 
-    hitbox.moveTo(position);
+        hitbox->moveTo(position);
+    }
+}
+
+void Modifier::hit(PhysicsEntity* otherEntity){
+    level->applyModifier(modType);
+    active = false;
+}
+
+void Modifier::setLevel(Level* l){
+    level = l;
 }

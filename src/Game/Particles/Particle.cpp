@@ -12,14 +12,11 @@ void Particle::update(float deltaTime){
     if(lifeTime>0.0f) lifeTime -= deltaTime;
 }
 
-void Particle::respawn(glm::vec2 pos,glm::vec2 vel,float life){
-    float random = ((rand()%100)-50)/10.0f;
-    float randomBright = 0.5f + ((rand() % 100) / 100.0f);
-
-    position = pos+random+6.0f;
-    velocity = vel*0.1f;
+void Particle::respawn(glm::vec2 pos,glm::vec2 vel,float life,glm::vec4 col){
+    position = pos;
+    velocity = vel;
     lifeTime = life;
-    color = glm::vec4(randomBright,randomBright,randomBright,1.0f);
+    color = col;
 }
 
 bool Particle::isDead(){

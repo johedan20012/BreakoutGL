@@ -1,16 +1,25 @@
 #include "PlayScreen.h"
 
 PlayScreen::PlayScreen(TextFont& fuente)
-    :state(PlayState::PLAY),numLevel(1),fuente(fuente),Screen(ScreenType::PLAY_SCREEN){}
+    :Screen(ScreenType::PLAY_SCREEN)
+    ,state(PlayState::PLAY),numLevel(1),fuente(fuente),level(nullptr){}
+
+PlayScreen::~PlayScreen(){
+    if(level != nullptr) delete level;
+    level = nullptr;
+}
 
 void PlayScreen::init(){
     
     //level.load("assets/levels/test.txt",800,300,fuente);
     player = Player(SpriteManager::getSprite("bar"));
+    player.init();
     Level::setPlayer(&player);
+    Brick::setPlayer(&player);
+
     //Intento de nivel aleatorio
-    level = Level();
-    level.load(20,25,800,400,fuente,false);
+    level = new Level();
+    level->load(20,25,800,400,fuente);
 
     background = SpriteManager::getSprite("background");
 }
@@ -21,14 +30,15 @@ void PlayScreen::update(float deltaTime){
     handleInput();
 
     if(state == PlayState::PLAY){
-        level.update(deltaTime);
+        level->update(deltaTime);
 
         
-        if(level.isCompleted()){
+        if(level->isCompleted()){
             //Cambiar de nivel
             numLevel++;
-            level = Level();
-            level.load(20,25,800,400,fuente,false);
+            delete level;
+            level = new Level();
+            level->load(20,25,800,400,fuente,false);
         }else if(player.gameover()){
             state = PlayState::GAMEOVER;
         }
@@ -38,7 +48,7 @@ void PlayScreen::update(float deltaTime){
 void PlayScreen::render(){
     Shader& shader = ShaderManager::getShader("shader");
     SpriteRenderer::drawSprite(background,shader,glm::vec2(0.0f,0.0f),glm::vec2(800.0f,600.0f),0,glm::vec4(1.0f));
-    level.render(shader);
+    level->render(shader);
 
     //Renderizar los puntos y vidas del jugador
     std::stringstream ss,ss2; ss << player.getLives();
@@ -69,7 +79,8 @@ void PlayScreen::handleInput(){
     }
 
     if(Keyboard::keyWentDown(GLFW_KEY_R) == GLFW_PRESS){
-        level = Level();
-        level.load(20,25,800,400,fuente,false);
+        delete level;
+        level = new Level();
+        level->load(20,25,800,400,fuente,false);
     }
 }

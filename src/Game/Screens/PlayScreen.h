@@ -19,7 +19,7 @@ enum class PlayState{
 class PlayScreen : public Screen{
     PlayState state;
     unsigned int numLevel;
-    Level level;
+    Level* level;
 
     Texture2D background;
 
@@ -28,6 +28,7 @@ class PlayScreen : public Screen{
     TextFont fuente;
     public:
         PlayScreen(TextFont& fuente);
+        ~PlayScreen() override;
 
         //Metodos de la clase padre
         void init() override;

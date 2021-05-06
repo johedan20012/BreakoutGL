@@ -14,9 +14,9 @@
 #include "Brick.h"
 #include "Player.h"
 #include "Ball.h"
-#include "Laser.h"
 #include "Modifier.h"
-#include "Particles/ParticleGenerator.h"
+
+#include "../Math/MathHelper.hpp"
 
 #include "../Physics/PhysicsFunctions.h"
 #include "../Physics/PhysicsManager.h"
@@ -30,15 +30,11 @@ class Level{
         std::vector<Brick*> bricks;
         int noBricks;
 
-        static const int NUM_LASERS = 6;
+        std::vector<Ball*> balls;
 
-        Laser lasers[NUM_LASERS];
+        std::vector<glm::vec2> explosions;
 
-        Ball ball;
-
-        Modifier powerUp;
-
-        ParticleGenerator ballParticles;
+        Modifier* powerUp;
 
         TextFont fuente;
 
@@ -56,15 +52,20 @@ class Level{
         void render(Shader& shader);
 
         bool isCompleted();
+
+        //Metodos para que llamen los objetos del juego
+        void setExplosion(glm::vec2 cellPos);
+
+        void spawnModifier(glm::vec2 pos);
+
+        void applyModifier(ModifierType modType);
     
     private:
         void handleInput();
 
-        void handleCollisions();
-
         void init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth,unsigned int levelHeight);
-
-        void clearBricks();
+    
+        void spawnBall();
     //Metodos estaticos
     public:
         static void setPlayer(Player* p);

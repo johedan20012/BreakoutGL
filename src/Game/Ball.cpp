@@ -4,9 +4,16 @@ Player* Ball::player = nullptr;
 
 Ball::Ball(glm::vec2 position,float velMagnitude,Texture2D& sprite)
     : GameObject(position,0,glm::vec2(12.0f,12.0f),glm::vec4(1.0f),INITIAL_BALL_VELOCITY_DIR,sprite)
-    , PhysicsEntity(new CircleCollider(position,6.0f),EntityType::BALL)
-    ,diffPosX(0.5f),velMagnitude(velMagnitude), stuck(true),dead(false){}
+    , PhysicsEntity(new CircleCollider(position,6.0f),EntityType::BALL,(unsigned int)(EntityType::BRICK) | (unsigned int)(EntityType::PLAYER))
+    ,diffPosX(0.5f),velMagnitude(velMagnitude), stuck(true),dead(false),through(false),fire(false){
+        id = PhysicsManager::registerEntity(this);
+        //Inicia el generador de particulas
+        ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),250,SpriteManager::getSprite("particle"));
+}
 
+Ball::~Ball(){
+    PhysicsManager::unregisterEntity(id);
+}
 
 void Ball::setStuck(bool stuck){
     this->stuck = stuck;
@@ -14,6 +21,10 @@ void Ball::setStuck(bool stuck){
 
 bool Ball::isStuck(){
     return stuck;
+}
+
+bool Ball::hasFire(){
+    return fire;
 }
 
 void Ball::update(float deltaTime,unsigned int scrWidth,unsigned int scrHeight){
@@ -42,7 +53,14 @@ void Ball::update(float deltaTime,unsigned int scrWidth,unsigned int scrHeight){
         dead = true;
     }
 
+    ballParticles.update(*this,deltaTime);
+
     hitbox->moveTo(position);
+}
+
+void Ball::render(Shader& shader){
+    GameObject::render(shader);
+    ballParticles.render(shader);
 }
 
 void Ball::reset(float velMag){
@@ -73,12 +91,15 @@ void Ball::applyModifier(ModifierType modifier){
             break;
         
         case ModifierType::THROUGH_BALL:
-            //FIXME
+            through = true;
             break;
         
         case ModifierType::FIRE_BALL:
-            //FIXME
+            fire = true;
             break;
+    }
+    if(fire){
+        ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),250,SpriteManager::getSprite("fireParticle"));
     }
 }
 
@@ -87,6 +108,8 @@ bool Ball::isDead(){
 }
 
 void Ball::hitBrick(BoxCollider* brickHitbox){
+    if(through) return;
+    
     glm::vec2 center = hitbox->calculateCenter();
     glm::vec2 centerOther = brickHitbox->calculateCenter();
     glm::vec2 halfDimOther = brickHitbox->calculateDimensions() / 2.0f;

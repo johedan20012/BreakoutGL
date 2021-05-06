@@ -2,7 +2,8 @@
 #define MODIFIER_H
 
 #include "GameObject.h"
-#include "../Physics/BoxCollider.h"
+#include "../Physics/PhysicsEntity.h"
+#include "../Physics/PhysicsManager.h"
 
 enum class ModifierType{
     LARGE_BAR = 0,
@@ -23,25 +24,30 @@ enum class ModifierType{
     NUM_TYPES
 };
 
-class Modifier : public GameObject{
+class Level;
+
+class Modifier : public GameObject, public PhysicsEntity{
     private:
-        BoxCollider hitbox;
-        ModifierType type;
+        ModifierType modType;
         bool active;
 
+        static Level* level;
+
     public:
-        Modifier() = default;
         Modifier(glm::vec2 position,glm::vec2 velocity,ModifierType type,Texture2D& sprite);
+        ~Modifier();
 
-        BoxCollider& getHitbox();
-
-        ModifierType getType();
+        ModifierType getModType();
 
         bool isActive();
 
-        void desactivate();
-
         void update(float deltaTime);
+
+        void hit(PhysicsEntity* otherEntity) override;
+
+    //Metodos estaticos
+    public:
+        static void setLevel(Level* l);
 };
 
 #endif

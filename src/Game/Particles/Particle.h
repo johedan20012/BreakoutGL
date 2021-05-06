@@ -15,7 +15,7 @@ class Particle : public GameObject{
 
         void update(float deltaTime);
 
-        void respawn(glm::vec2 pos,glm::vec2 vel,float life);
+        void respawn(glm::vec2 pos,glm::vec2 vel,float life,glm::vec4 col);
 
         bool isDead();
 };

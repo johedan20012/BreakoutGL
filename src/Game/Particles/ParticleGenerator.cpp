@@ -11,7 +11,11 @@ void ParticleGenerator::update(GameObject& object,float deltaTime){
     bool particleSpawned = false;
     for(int i=0; i<particles.size(); i++){
         if(particles[i].isDead() && !particleSpawned){ //Spawnea una nueva particula si es posible
-            particles[i].respawn(object.getPosition(),object.getVelocity(),1.0f);
+            float random = ((rand()%100)-50)/10.0f;
+            float random2 = ((rand()%100)-50)/10.0f;
+            glm::vec2 offset(random,random2);
+            float randomBright = 0.5f + ((rand() % 100) / 100.0f);
+            particles[i].respawn(object.getPosition()+offset,object.getVelocity()*0.1f,1.0f,glm::vec4(randomBright,randomBright,randomBright,1.0f));
             particles[i].update(deltaTime);
             particleSpawned = true;
         }else{

@@ -3,21 +3,18 @@
 
 #include "GameObject.h"
 
-#include "../Physics/BoxCollider.h"
+#include "../Physics/PhysicsEntity.h"
+#include "../Physics/PhysicsManager.h"
 
-#include "Player.h"
-
-class Laser : public GameObject{
+class Laser : public GameObject, public PhysicsEntity{
     private:
         bool active;
-        BoxCollider hitbox;
-
-        static Player* player;
     public:
         Laser() = default;
         Laser(Texture2D& sprite);
+        ~Laser();
 
-        BoxCollider& getHitbox();
+        void init();
 
         bool isActive();
 
@@ -25,9 +22,7 @@ class Laser : public GameObject{
 
         void update(float deltaTime);
 
-        void hit();
-
-        static void setPlayer(Player* p);
+        void hit(PhysicsEntity* otherEntity);
 };
 
 #endif
