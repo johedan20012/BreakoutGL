@@ -1,13 +1,9 @@
 #include "Modifier.h"
 
-#include "Level.h"
-
-Level* Modifier::level = nullptr;
-
 Modifier::Modifier(glm::vec2 position,glm::vec2 velocity,ModifierType type,Texture2D& sprite)
     :GameObject(position,0,glm::vec2(50.0f,50.0f),glm::vec4(1.0f),velocity,sprite)
     ,PhysicsEntity(new BoxCollider(position,glm::vec2(50.0f,50.0f)),EntityType::MODIFIER,(unsigned int)(EntityType::BRICK))
-    ,modType(type),active(true){
+    ,modType(type),active(true),applyEffect(false){
         id = PhysicsManager::registerEntity(this);
 }
 
@@ -21,6 +17,10 @@ ModifierType Modifier::getModType(){
 
 bool Modifier::isActive(){
     return active;
+}
+
+bool Modifier::shouldApplyEffect(){
+    return applyEffect;
 }
 
 void Modifier::update(float deltaTime){
@@ -43,10 +43,6 @@ void Modifier::update(float deltaTime){
 }
 
 void Modifier::hit(PhysicsEntity* otherEntity){
-    level->applyModifier(modType);
+    applyEffect = true;
     active = false;
-}
-
-void Modifier::setLevel(Level* l){
-    level = l;
 }

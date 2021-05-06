@@ -24,14 +24,11 @@ enum class ModifierType{
     NUM_TYPES
 };
 
-class Level;
-
 class Modifier : public GameObject, public PhysicsEntity{
     private:
         ModifierType modType;
         bool active;
-
-        static Level* level;
+        bool applyEffect;
 
     public:
         Modifier(glm::vec2 position,glm::vec2 velocity,ModifierType type,Texture2D& sprite);
@@ -40,14 +37,11 @@ class Modifier : public GameObject, public PhysicsEntity{
         ModifierType getModType();
 
         bool isActive();
+        bool shouldApplyEffect();
 
         void update(float deltaTime);
 
         void hit(PhysicsEntity* otherEntity) override;
-
-    //Metodos estaticos
-    public:
-        static void setLevel(Level* l);
 };
 
 #endif

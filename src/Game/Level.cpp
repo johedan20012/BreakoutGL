@@ -148,6 +148,9 @@ void Level::update(float deltaTime){
     //Procesar las explosiones pendientes
     for(int i = bricks.size()-1; i>=0; i--){
         if(bricks[i]->isDestroyed()){
+            if(bricks[i]->shouldSpawnModifier()){
+                spawnModifier(bricks[i]->getPosition());
+            }
             noBricks--;
             delete bricks[i];
             bricks.erase(bricks.begin()+i);
@@ -173,6 +176,9 @@ void Level::update(float deltaTime){
 
     if(powerUp != nullptr){
         if(!powerUp->isActive()){
+            if(powerUp->shouldApplyEffect()){
+                applyModifier(powerUp->getModType());
+            }
             delete powerUp;
             powerUp = nullptr;
         }
@@ -224,6 +230,9 @@ void Level::spawnModifier(glm::vec2 pos){
     if(powerUp != nullptr){
         if(powerUp->isActive()){
            return; 
+        }
+        if(powerUp->shouldApplyEffect()){
+            applyModifier(powerUp->getModType());
         }
         delete powerUp;
     }
@@ -297,8 +306,6 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
             } //else no se agrega un ladrillo en esa posicion
         }
     }
-    Brick::setLevel(this);
-
     //Iniciar jugador
     Ball::setPlayer(player);
     
@@ -306,9 +313,6 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
     for(int i = 0; i<10; i++){
         spawnBall();
     }
-
-    //Poner el puntero a este nivel a la clase Modifier
-    Modifier::setLevel(this);
 }
 
 void Level::spawnBall(){

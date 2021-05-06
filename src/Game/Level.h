@@ -39,6 +39,7 @@ class Level{
         TextFont fuente;
 
         static Player* player;
+        
     public:
         Level() = default;
         ~Level();
@@ -52,23 +53,28 @@ class Level{
         void render(Shader& shader);
 
         bool isCompleted();
-
-        //Metodos para que llamen los objetos del juego
+    
+    private:
+        //Metodos para modificar el nivel
+        //=======================================
         void setExplosion(glm::vec2 cellPos);
 
         void spawnModifier(glm::vec2 pos);
 
         void applyModifier(ModifierType modType);
-    
-    private:
+
+        void spawnBall();
+        //=========================================
+
         void handleInput();
 
         void init(std::vector<std::vector<unsigned int>> tileData, unsigned int levelWidth,unsigned int levelHeight);
     
-        void spawnBall();
     //Metodos estaticos
+    //===================================
     public:
         static void setPlayer(Player* p);
+    //===================================
 };
 
 #endif
