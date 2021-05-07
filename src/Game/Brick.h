@@ -13,18 +13,18 @@ class Brick : public GameObject, public PhysicsEntity{
         bool isSolid;
         bool destroyed;
         bool spawnModifier;
-
-        glm::vec2 cellPos;
+        bool explode;
 
         static Player* player;
     public:
-        Brick(glm::vec2 position,glm::vec2 cellPos,glm::vec2 size,glm::vec4 color,Texture2D sprite,bool isSolid = false);
+        Brick(glm::vec2 position,glm::vec2 size,glm::vec4 color,Texture2D sprite,bool isSolid = false);
         ~Brick();
+
+        void destroy();
 
         bool isDestroyed();
         bool shouldSpawnModifier();
-
-        glm::vec2 getCellPos();
+        bool shouldExplode();
 
         void hit(PhysicsEntity* otherEntity) override;
     public: // Metodos estaticos

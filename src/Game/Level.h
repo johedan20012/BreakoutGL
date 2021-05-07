@@ -27,16 +27,17 @@
 
 class Level{
     private:
-        std::vector<Brick*> bricks;
+        std::vector<std::vector<Brick*>> bricks;
         int noBricks;
+        bool finished;
 
         std::vector<Ball*> balls;
-
-        std::vector<glm::vec2> explosions;
 
         Modifier* powerUp;
 
         TextFont fuente;
+
+        static const int MOV[4][2];
 
         static Player* player;
         
@@ -57,8 +58,6 @@ class Level{
     private:
         //Metodos para modificar el nivel
         //=======================================
-        void setExplosion(glm::vec2 cellPos);
-
         void spawnModifier(glm::vec2 pos);
 
         void applyModifier(ModifierType modType);

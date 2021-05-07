@@ -2,10 +2,22 @@
 
 Player* Level::player = nullptr; 
 
+const int Level::MOV[4][2]  = {
+                            {1,0},
+                            {0,1},
+                            {-1,0},
+                            {0,-1}
+                        };
+
 Level::~Level(){
-    for(unsigned int i = 0; i<bricks.size(); i++){
-        delete bricks[i];
-        bricks[i] = nullptr;
+    for(int  i = 0; i<bricks.size(); i++){
+        for(int j = 0; j<bricks[i].size(); j++){
+            if(bricks[i][j] != nullptr){
+                delete bricks[i][j];
+                bricks[i][j] = nullptr;
+            }
+        }
+        bricks[i].clear();
     }
     bricks.clear();
 
@@ -14,8 +26,6 @@ Level::~Level(){
         balls[i] = nullptr;
     }
     balls.clear();
-
-    explosions.clear();
 
     delete powerUp;
     powerUp = nullptr;
@@ -145,27 +155,33 @@ void Level::update(float deltaTime){
     
     PhysicsManager::update();
 
-    //Procesar las explosiones pendientes
-    for(int i = bricks.size()-1; i>=0; i--){
-        if(bricks[i]->isDestroyed()){
-            if(bricks[i]->shouldSpawnModifier()){
-                spawnModifier(bricks[i]->getPosition());
-            }
-            noBricks--;
-            delete bricks[i];
-            bricks.erase(bricks.begin()+i);
-        } 
-        for(int j = 0; j<explosions.size(); j++){
-            if(MathHelper::taxiDistance(bricks[i]->getCellPos(),explosions[i]) == 1){
-                noBricks--;
-                delete bricks[i];
-                bricks.erase(bricks.begin()+i);
-                break;
+    for(int i = 0; i<bricks.size(); i++){
+        for(int j = 0; j<bricks[i].size(); j++){
+            if(bricks[i][j] != nullptr){
+                if(bricks[i][j]->isDestroyed()){
+                    if(bricks[i][j]->shouldSpawnModifier()){
+                        spawnModifier(bricks[i][j]->getPosition());
+                    }
+                    if(bricks[i][j]->shouldExplode()){
+                        for(int k=0; k<4; k++){
+                            int aux = i+MOV[k][0],auy=j+MOV[k][1];
+                            if( aux>=0 && aux<bricks.size() && auy >= 0 && auy<bricks[0].size()){
+                                if(bricks[aux][auy] != nullptr){
+                                    if(!bricks[aux][auy]->isDestroyed()){
+                                        bricks[aux][auy]->destroy();
+                                    }
+                                }
+                            }
+                        }      
+                    }
+                    noBricks--;
+                    delete bricks[i][j];
+                    bricks[i][j] = nullptr;
+                } 
             }
         }
     }
 
-    explosions.clear();
 
     for(int i = balls.size()-1; i>=0; i--){
         if(balls[i]->isDead()){
@@ -198,7 +214,9 @@ void Level::render(Shader& shader){
     //ballParticles.render(shader);
 
     for(int  i = 0; i<bricks.size(); i++){
-        bricks[i]->render(shader);
+        for(int j = 0; j<bricks[i].size(); j++){
+            if(bricks[i][j] != nullptr) bricks[i][j]->render(shader);
+        }
         //bricks[i].getHitbox().render(shader);
     }
 
@@ -217,16 +235,12 @@ void Level::render(Shader& shader){
 }
 
 bool Level::isCompleted(){
-    return (noBricks <= 0);
+    return (noBricks <= 0) || finished;
 }
 
 // ==================== Funciones para los objetos del juego =========================
-void Level::setExplosion(glm::vec2 cellPos){
-    explosions.push_back(cellPos);
-}
-
 void Level::spawnModifier(glm::vec2 pos){
-    ModifierType type =(ModifierType)(rand()%9);
+    ModifierType type =(ModifierType)(rand()%13);
     if(powerUp != nullptr){
         if(powerUp->isActive()){
            return; 
@@ -240,6 +254,23 @@ void Level::spawnModifier(glm::vec2 pos){
 }
 
 void Level::applyModifier(ModifierType modType){
+    switch (modType){
+        case ModifierType::EXTRA_BALL:
+            spawnBall();
+            return;
+        
+        case ModifierType::REMOVE_BALL:
+            if(balls.size() >0){
+                delete balls[balls.size()-1];
+                balls.erase(balls.begin()+balls.size()-1);
+            }
+            return;
+        
+        case ModifierType::NEXT_LEVEL:
+            finished = true;
+            return;
+    }
+
     for(int i = 0; i<balls.size(); i++){
         balls[i]->applyModifier(modType);
     }
@@ -265,25 +296,25 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
     unitWidth /=  noColumns;
     float unitHeight = levelHeight;
     unitHeight /= noRows;
-    for(int i = 0; i<noRows; i++){
-        for(int j= 0; j<noColumns; j++){
-            if(tileData[i][j]==5){ //Labrillo solido
-                Brick* newBrick = new Brick(glm::vec2(unitWidth*j,unitHeight*i),
-                                       glm::vec2(j,i),
+    for(int i = 0; i<noColumns; i++){
+        std::vector<Brick*> column;
+        for(int j= 0; j<noRows; j++){
+            Brick* newBrick = nullptr;
+            if(tileData[j][i]==5){ //Labrillo solido
+                newBrick = new Brick(glm::vec2(unitWidth*i,unitHeight*j),
                                        glm::vec2(unitWidth,unitHeight),
                                        //glm::vec4(0.8f,0.8f,0.7f,1.0f),
                                        glm::vec4(1.0f,1.0f,1.0f,1.0f),
                                        SpriteManager::getSprite("block_solid"),
                                        true);
-                bricks.push_back(newBrick);
-            }else if(tileData[i][j]>=1){
+            }else if(tileData[j][i]>=1){
                 noBricks ++;
 
-                glm::vec2 pos(unitWidth*j,unitHeight*i);
+                glm::vec2 pos(unitWidth*i,unitHeight*j);
                 glm::vec2 size(unitWidth,unitHeight);
 
                 glm::vec4 color(1.0f);
-                switch (tileData[i][j]){
+                switch (tileData[j][i]){
                     case 1:
                         //color = glm::vec4(0.2f, 0.6f, 1.0f,1.0f);
                         color = glm::vec4(0.2f,0.2f,0.2f,1.0f);
@@ -301,10 +332,11 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
                         color = glm::vec4(0.8f,0.8f,0.8f,1.0f);
                         break;
                 }
-                Brick* newBrick = new Brick(pos,glm::vec2(j,i),size,color,SpriteManager::getSprite("block"));
-                bricks.push_back(newBrick);
-            } //else no se agrega un ladrillo en esa posicion
+                newBrick = new Brick(pos,size,color,SpriteManager::getSprite("block"));
+            } //else no se crea un ladrillo en esta posicion
+            column.push_back(newBrick);
         }
+        bricks.push_back(column);
     }
     //Iniciar jugador
     Ball::setPlayer(player);

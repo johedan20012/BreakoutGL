@@ -64,6 +64,10 @@ int Game::init(){
     SpriteManager::loadSprite("assets/textures/Power7.png","pow7",false);
     SpriteManager::loadSprite("assets/textures/Power8.png","pow8",false);
     SpriteManager::loadSprite("assets/textures/Power9.png","pow9",false);
+    SpriteManager::loadSprite("assets/textures/Power10.png","pow10",false);
+    SpriteManager::loadSprite("assets/textures/Power11.png","pow11",false);
+    SpriteManager::loadSprite("assets/textures/Power12.png","pow12",false);
+    SpriteManager::loadSprite("assets/textures/Power13.png","pow13",false);
 
     SpriteManager::loadSprite("assets/textures/particle.png","particle",false);
     SpriteManager::loadSprite("assets/textures/particleFire.png","fireParticle",false);

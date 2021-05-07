@@ -92,14 +92,16 @@ void Ball::applyModifier(ModifierType modifier){
         
         case ModifierType::THROUGH_BALL:
             through = true;
+            if(fire) ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),250,SpriteManager::getSprite("particle"));
+            fire = false;
             break;
         
         case ModifierType::FIRE_BALL:
             fire = true;
+            through = false;
+
+            ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),250,SpriteManager::getSprite("fireParticle"));
             break;
-    }
-    if(fire){
-        ballParticles = ParticleGenerator(glm::vec2(10.0f,10.0f),250,SpriteManager::getSprite("fireParticle"));
     }
 }
 

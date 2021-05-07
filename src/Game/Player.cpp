@@ -73,10 +73,16 @@ void Player::applyModifier(ModifierType modifier){
         case ModifierType::LASER_BAR:
             shootLasers = true;
             break;
+
         case ModifierType::RESET_BAR:
             sticky = false;
             shootLasers = false;
             sizeBar = 1;
+            break;
+        
+        case ModifierType::EXTRA_LIFE:
+            lives++;
+            break;
     }
 
     //Actualizar la barra del jugador con los valores actuales
