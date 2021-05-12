@@ -6,9 +6,19 @@ enum class ScreenType{
     PLAY_SCREEN,
 };
 
+enum class ScreenState{
+    RUNNING,
+    PAUSED,
+    FINISHED,
+    CLOSE_GAME,
+};
+
 class Screen{ //Clase abstracta para las pantallas del juego
     private:
         ScreenType type;
+
+    protected:
+        ScreenState state;
 
     public:
         Screen() = default;
@@ -17,13 +27,13 @@ class Screen{ //Clase abstracta para las pantallas del juego
 
         ScreenType getType();
 
+        ScreenState getState();
+
         virtual void init() = 0;
 
         virtual void update(float deltaTime) = 0;
 
         virtual void render() = 0;
-
-        virtual bool finished() = 0;
 };
 
 

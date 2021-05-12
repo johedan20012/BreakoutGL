@@ -4,8 +4,9 @@
 #include "Screen.h"
 
 #include "../Level.h"
-
 #include "../Player.h"
+
+#include "../UI/Button.h"
 
 #include "../../Graphics/ShaderManager.h"
 #include "../../Graphics/TextFont.h"
@@ -17,11 +18,17 @@ enum class PlayState{
 };
 
 class PlayScreen : public Screen{
-    PlayState state;
+    PlayState playState;
     unsigned int numLevel;
     Level* level;
 
     Texture2D background;
+
+    Texture2D pauseBackground;
+    Button pauseButtons[2];
+
+    // 0 = no cambiar la caputura del cursor, 1 = capturar el cursor, 2 = dejar de capturar el cursor
+    int mouseState; 
 
     Player player;
 
@@ -37,7 +44,8 @@ class PlayScreen : public Screen{
 
         void render() override;
 
-        bool finished() override;
+        int getMouseState();
+
     private:
         void handleInput();
 };  

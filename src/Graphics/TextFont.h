@@ -31,6 +31,8 @@ class TextFont{
 
         void renderText(std::string text,glm::vec2 pos,float scale,Shader shader,glm::vec4 color = glm::vec4(1.0f));
 
+        glm::vec2 getTextDimensions(std::string text,float scale);
+
         void cleanup();
 
     private:

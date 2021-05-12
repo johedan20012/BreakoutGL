@@ -94,11 +94,28 @@ void TextFont::renderText(std::string text,glm::vec2 pos,float scale,Shader shad
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        // now advance cursors for next glyph
-        pos.x += (ch.advance >> 6) * scale; // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
+        //Se avanza la posición al siguiente simbolo
+        pos.x += (ch.advance >> 6) * scale; 
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+glm::vec2 TextFont::getTextDimensions(std::string text,float scale){
+    float textWidth = 0,textHeight = 0;
+
+    std::string::const_iterator c;
+    for (c = text.begin(); c != text.end(); c++){
+        Character ch = characters[*c];
+
+        float charWidth = (ch.advance >> 6) * scale;
+        float charHeight = (ch.size.y-ch.bearing.y + characters['H'].bearing.y) * scale;
+
+        textWidth += charWidth;
+        textHeight = std::max(textHeight,charHeight);
+    }
+
+    return glm::vec2(textWidth,textHeight);
 }
 
 void TextFont::cleanup(){

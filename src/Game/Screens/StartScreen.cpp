@@ -1,7 +1,11 @@
 #include "StartScreen.h"
 
 StartScreen::StartScreen(TextFont& fuente)
-    :fuente(fuente),finish(false),Screen(ScreenType::START_SCREEN){}
+    :fuente(fuente),Screen(ScreenType::START_SCREEN){
+        buttons[0] = Button("Modo normal",fuente,glm::vec2(290,300));
+        buttons[1] = Button("Modo infinito",fuente,glm::vec2(290,350));
+        buttons[2] = Button("Salir",fuente,glm::vec2(290,400));
+    }
 
 void StartScreen::init(){
     shader = ShaderManager::getShader("shader");
@@ -11,18 +15,25 @@ void StartScreen::init(){
 }
 
 void StartScreen::update(float deltaTime){
-    if(Mouse::buttonWentDown(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
-        finish = true;
+    for(int i = 0; i<NUM_BUTTONS; i++){
+        buttons[i].update();
+    }
+
+    if(buttons[1].isActive() || buttons[0].isActive()){
+        state = ScreenState::FINISHED;
+    }
+
+    if(buttons[2].isActive()){
+        state = ScreenState::CLOSE_GAME;
     }
 }
 
 void StartScreen::render(){
     SpriteRenderer::drawSprite(fondo,shader,glm::vec2(0.0f,0.0f),glm::vec2(800.0f,600.0f),0,glm::vec4(1.0f));
-    SpriteRenderer::drawSprite(nombre,shader,glm::vec2(150.0f,200.0f),glm::vec2(500.0f,100.0f),0,glm::vec4(1.0f));
+    SpriteRenderer::drawSprite(nombre,shader,glm::vec2(150.0f,150.0f),glm::vec2(500.0f,100.0f),0,glm::vec4(1.0f));
 
-    fuente.renderText("Haz click para empezar",glm::vec2(220.0f,350.0f),1.0f,ShaderManager::getShader("textShader"));
-}
-
-bool StartScreen::finished(){
-    return finish;
+    Shader textShader = ShaderManager::getShader("textShader");
+    for(int i =0 ; i<NUM_BUTTONS; i++){
+        buttons[i].render(textShader);
+    }
 }

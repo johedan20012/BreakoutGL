@@ -25,8 +25,6 @@ int Game::init(){
 
     glfwMakeContextCurrent(window);
 
-    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
-
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         std::cout << "No se pudo iniciar GLAD\n";
         return -1;
@@ -52,6 +50,7 @@ int Game::init(){
     SpriteManager::loadSprite("assets/textures/block_solid.png","block_solid",false);
     SpriteManager::loadSprite("assets/textures/block.png","block",false);
     SpriteManager::loadSprite("assets/textures/background.jpg","background",false);
+    SpriteManager::loadSprite("assets/textures/fondoPausa.png","pauseBackground",false);
     SpriteManager::loadSprite("assets/textures/bar.png","bar",false);
     SpriteManager::loadSprite("assets/textures/barSticky.png","barSticky",false);
     SpriteManager::loadSprite("assets/textures/awesomeface.png","ball",false);
@@ -108,24 +107,35 @@ void Game::run(){
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         
-        //Entrada
-        if(Keyboard::key(GLFW_KEY_ESCAPE) == GLFW_PRESS){
-            glfwSetWindowShouldClose(window,true);
-        }
-
         //Update
         screen->update(deltaTime);
-        if(screen->finished()){
+        if(screen->getState() == ScreenState::FINISHED){
             switch(screen->getType()){
                 case ScreenType::START_SCREEN:
+                    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
                     delete screen;
                     screen = new PlayScreen(fuente);
                     screen->init();
                     break;
                 case ScreenType::PLAY_SCREEN:
+                    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_NORMAL);
+                    glfwSetCursorPos(window,400.0f,250.0f);
                     delete screen;
                     screen = new StartScreen(fuente);
                     screen->init();
+                    break;
+            }
+        }else if(screen->getState() == ScreenState::CLOSE_GAME){
+            glfwSetWindowShouldClose(window,true);
+        }else if(screen->getType() == ScreenType::PLAY_SCREEN){
+            switch (((PlayScreen*)screen)->getMouseState()){
+                case 1:
+                    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
+                    break;
+                
+                case 2:
+                    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_NORMAL);
+                    glfwSetCursorPos(window,400.0f,300.0f);
                     break;
             }
         }

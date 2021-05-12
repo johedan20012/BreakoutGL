@@ -41,6 +41,11 @@ bool Physics::CircleCircleCollision(CircleCollider circle,CircleCollider circle2
     return (glm::length(center-centerOther) < radius + radiusOther);
 }
 
+bool Physics::PointInBox(glm::vec2 point,BoxCollider box){
+    return (point.x >= box.getMin().x && point.x <= box.getMax().x &&
+            point.y >= box.getMin().y && point.y <= box.getMax().y);
+}
+
 glm::vec2 Physics::DirectionVector(glm::vec2 vector){
     glm::vec2 compass[] = {
         glm::vec2(0.0f, 1.0f),	// up
