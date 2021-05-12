@@ -15,7 +15,7 @@ enum class ModifierType{
     SLOW_BALL,
     THROUGH_BALL,
     FIRE_BALL,
-    EXTRA_BALL,
+    SPLIT_BALLS,
     REMOVE_BALL,
     EXTRA_LIFE,
     NEXT_LEVEL,

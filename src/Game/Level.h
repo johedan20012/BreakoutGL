@@ -7,8 +7,6 @@
 #include <stdlib.h> 
 #include <time.h>
 
-#include <glm/gtc/noise.hpp>
-
 #include <FastNoiseLite/FastNoiseLite.h>
 
 #include "Brick.h"
@@ -62,7 +60,7 @@ class Level{
 
         void applyModifier(ModifierType modType);
 
-        void spawnBall();
+        void splitBalls();
         //=========================================
 
         void handleInput();

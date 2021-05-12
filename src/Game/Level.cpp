@@ -204,7 +204,8 @@ void Level::update(float deltaTime){
         player->loseLive();
         if(!player->gameover()){
             //ball->reset(364.0f);
-            spawnBall();
+            glm::vec2 ballPosition = player->getPosition()+glm::vec2(player->getSize().x/2.0f - 12.5f,-25.0f);
+            balls.push_back(new Ball(ballPosition,364.0f,SpriteManager::getSprite("ball")));
         }
     }
 }
@@ -255,8 +256,8 @@ void Level::spawnModifier(glm::vec2 pos){
 
 void Level::applyModifier(ModifierType modType){
     switch (modType){
-        case ModifierType::EXTRA_BALL:
-            spawnBall();
+        case ModifierType::SPLIT_BALLS:
+            splitBalls();
             return;
         
         case ModifierType::REMOVE_BALL:
@@ -322,14 +323,20 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
     Ball::setPlayer(player);
     
     //Iniciar pelota
-    for(int i = 0; i<10; i++){
-        spawnBall();
-    }
-}
-
-void Level::spawnBall(){
     glm::vec2 ballPosition = player->getPosition()+glm::vec2(player->getSize().x/2.0f - 12.5f,-25.0f);
     balls.push_back(new Ball(ballPosition,364.0f,SpriteManager::getSprite("ball")));
+}
+
+void Level::splitBalls(){
+    int noBalls = balls.size();
+    for(int i = 0; i<noBalls; i++){
+        glm::vec2 ballDir = glm::normalize(balls[i]->getVelocity());
+        glm::vec3 newBall1Dir = glm::rotate(glm::vec3(ballDir,0.0f),glm::radians(25.0f),glm::vec3(0.0f,0.0f,1.0f));
+        balls.push_back(new Ball(balls[i]->getPosition(),364.0f,SpriteManager::getSprite("ball")));
+        balls[balls.size()-1]->setStuck(false);
+        std::cout <<newBall1Dir.x<<" "<<newBall1Dir.y<<" "<<newBall1Dir.z<<"\n";
+        balls[balls.size()-1]->setVelocity(newBall1Dir);
+    }
 }
 
 void Level::setPlayer(Player* p){
