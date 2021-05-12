@@ -1,7 +1,7 @@
 #include "StartScreen.h"
 
 StartScreen::StartScreen(TextFont& fuente)
-    :fuente(fuente),Screen(ScreenType::START_SCREEN){
+    :fuente(fuente),playInfinite(false),Screen(ScreenType::START_SCREEN){
         buttons[0] = Button("Modo normal",fuente,glm::vec2(290,300));
         buttons[1] = Button("Modo infinito",fuente,glm::vec2(290,350));
         buttons[2] = Button("Salir",fuente,glm::vec2(290,400));
@@ -20,6 +20,7 @@ void StartScreen::update(float deltaTime){
     }
 
     if(buttons[1].isActive() || buttons[0].isActive()){
+        if(buttons[1].isActive()) playInfinite = true;
         state = ScreenState::FINISHED;
     }
 
@@ -36,4 +37,8 @@ void StartScreen::render(){
     for(int i =0 ; i<NUM_BUTTONS; i++){
         buttons[i].render(textShader);
     }
+}
+
+bool StartScreen::gameInfinite(){
+    return playInfinite;
 }

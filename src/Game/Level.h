@@ -45,7 +45,7 @@ class Level{
         Level() = default;
         ~Level();
 
-        void load(const char* file,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente);
+        void load(std::string file,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente);
 
         void load(unsigned int noRows,unsigned int noColumns,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente,bool noise=true);
 

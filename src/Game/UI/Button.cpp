@@ -55,7 +55,7 @@ void Button::render(Shader& shader){
             font.renderText(text,clickArea.getMin(),1.0f,shader);
             break;
     }
-    clickArea.render(ShaderManager::getShader("shader"));
+    //clickArea.render(ShaderManager::getShader("shader"));
 }
 
 bool Button::isActive(){

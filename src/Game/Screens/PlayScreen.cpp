@@ -1,8 +1,8 @@
 #include "PlayScreen.h"
 
-PlayScreen::PlayScreen(TextFont& fuente)
-    :Screen(ScreenType::PLAY_SCREEN)
-    ,playState(PlayState::PLAY),numLevel(1),fuente(fuente),level(nullptr){}
+PlayScreen::PlayScreen(TextFont& fuente,bool infinite)
+    :infinite(infinite),Screen(ScreenType::PLAY_SCREEN)
+    ,playState(PlayState::PLAY),numLevel(0),fuente(fuente),level(nullptr){}
 
 PlayScreen::~PlayScreen(){
     if(level != nullptr) delete level;
@@ -10,15 +10,12 @@ PlayScreen::~PlayScreen(){
 }
 
 void PlayScreen::init(){
-    //level.load("assets/levels/test.txt",800,300,fuente);
     player = Player(SpriteManager::getSprite("bar"));
     player.init();
     Level::setPlayer(&player);
     Brick::setPlayer(&player);
 
-    //Intento de nivel aleatorio
-    level = new Level();
-    level->load(20,25,800,400,fuente);
+    loadNextLevel();
 
     background = SpriteManager::getSprite("background");
     pauseBackground = SpriteManager::getSprite("pauseBackground");
@@ -43,10 +40,8 @@ void PlayScreen::update(float deltaTime){
         
         if(level->isCompleted()){
             //Cambiar de nivel
-            numLevel++;
             delete level;
-            level = new Level();
-            level->load(20,25,800,400,fuente,false);
+            loadNextLevel();
         }else if(player.gameover()){
             playState = PlayState::GAMEOVER;
         }
@@ -107,7 +102,19 @@ void PlayScreen::handleInput(){
 
     if(Keyboard::keyWentDown(GLFW_KEY_R) == GLFW_PRESS){
         delete level;
-        level = new Level();
-        level->load(20,25,800,400,fuente,false);
+        loadNextLevel();
+    }
+}
+
+void PlayScreen::loadNextLevel(){
+    numLevel++;
+    level = new Level();
+    if(infinite){
+        level->load(20,20,800,400,fuente,false);
+    }else{
+        std::stringstream ss;
+        ss<<numLevel;
+        std::string levelPath = "assets/levels/level"+ss.str()+".txt";
+        level->load(levelPath,800,400,fuente);
     }
 }

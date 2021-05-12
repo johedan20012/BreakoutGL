@@ -20,6 +20,8 @@ class StartScreen : public Screen{
 
         static int const NUM_BUTTONS = 3;
         Button buttons[NUM_BUTTONS];
+
+        bool playInfinite;
     public:
         StartScreen(TextFont& fuente);
 
@@ -28,6 +30,8 @@ class StartScreen : public Screen{
         void update(float deltaTime) override;
 
         void render() override;
+
+        bool gameInfinite();
 };
 
 #endif

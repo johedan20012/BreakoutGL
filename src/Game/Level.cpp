@@ -31,7 +31,7 @@ Level::~Level(){
     powerUp = nullptr;
 }
 
-void Level::load(const char* filename,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente){
+void Level::load(std::string filename,unsigned int levelWidth,unsigned int levelHeight,TextFont& fuente){
     this->fuente = fuente;
     
     std::ifstream file;

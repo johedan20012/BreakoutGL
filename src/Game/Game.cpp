@@ -114,7 +114,7 @@ void Game::run(){
                 case ScreenType::START_SCREEN:
                     glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
                     delete screen;
-                    screen = new PlayScreen(fuente);
+                    screen = new PlayScreen(fuente,((StartScreen*)screen)->gameInfinite());
                     screen->init();
                     break;
                 case ScreenType::PLAY_SCREEN:

@@ -22,6 +22,8 @@ class PlayScreen : public Screen{
     unsigned int numLevel;
     Level* level;
 
+    bool infinite;
+
     Texture2D background;
 
     Texture2D pauseBackground;
@@ -34,7 +36,7 @@ class PlayScreen : public Screen{
 
     TextFont fuente;
     public:
-        PlayScreen(TextFont& fuente);
+        PlayScreen(TextFont& fuente,bool infinite = false);
         ~PlayScreen() override;
 
         //Metodos de la clase padre
@@ -48,6 +50,8 @@ class PlayScreen : public Screen{
 
     private:
         void handleInput();
+
+        void loadNextLevel();
 };  
 
 #endif
