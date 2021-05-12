@@ -15,9 +15,11 @@ class Brick : public GameObject, public PhysicsEntity{
         bool spawnModifier;
         bool explode;
 
+        int resistance;
+
         static Player* player;
     public:
-        Brick(glm::vec2 position,glm::vec2 size,glm::vec4 color,Texture2D sprite,bool isSolid = false);
+        Brick(glm::vec2 position,glm::vec2 size,int resistance,Texture2D sprite,bool isSolid = false);
         ~Brick();
 
         void destroy();
@@ -27,6 +29,9 @@ class Brick : public GameObject, public PhysicsEntity{
         bool shouldExplode();
 
         void hit(PhysicsEntity* otherEntity) override;
+    private:
+        void updateColor();
+    
     public: // Metodos estaticos
         static void setPlayer(Player* p);
 };

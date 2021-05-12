@@ -303,8 +303,7 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
             if(tileData[j][i]==5){ //Labrillo solido
                 newBrick = new Brick(glm::vec2(unitWidth*i,unitHeight*j),
                                        glm::vec2(unitWidth,unitHeight),
-                                       //glm::vec4(0.8f,0.8f,0.7f,1.0f),
-                                       glm::vec4(1.0f,1.0f,1.0f,1.0f),
+                                       5,
                                        SpriteManager::getSprite("block_solid"),
                                        true);
             }else if(tileData[j][i]>=1){
@@ -313,26 +312,7 @@ void Level::init(std::vector<std::vector<unsigned int>> tileData, unsigned int l
                 glm::vec2 pos(unitWidth*i,unitHeight*j);
                 glm::vec2 size(unitWidth,unitHeight);
 
-                glm::vec4 color(1.0f);
-                switch (tileData[j][i]){
-                    case 1:
-                        //color = glm::vec4(0.2f, 0.6f, 1.0f,1.0f);
-                        color = glm::vec4(0.2f,0.2f,0.2f,1.0f);
-                        break;
-                    case 2:
-                        //color = glm::vec4(0.0f, 0.7f, 0.0f,1.0f);
-                        color = glm::vec4(0.4f,0.4f,0.4f,1.0f);
-                        break;
-                    case 3:
-                        //color = glm::vec4(0.8f, 0.8f, 0.4f,1.0f);
-                        color = glm::vec4(0.6f,0.6f,0.6f,1.0f);
-                        break;
-                    case 4:
-                        //color = glm::vec4(1.0f, 0.5f, 0.0f,1.0f);
-                        color = glm::vec4(0.8f,0.8f,0.8f,1.0f);
-                        break;
-                }
-                newBrick = new Brick(pos,size,color,SpriteManager::getSprite("block"));
+                newBrick = new Brick(pos,size,tileData[j][i],SpriteManager::getSprite("block"));
             } //else no se crea un ladrillo en esta posicion
             column.push_back(newBrick);
         }
