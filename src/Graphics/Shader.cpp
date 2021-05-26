@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-void Shader::load(const char* vertexShaderFilename,const char* fragmentShaderFilename){
+void Shader::load(const char* vertexShaderFilename,const char* fragmentShaderFilename,const char* geometryShaderFilename){
     int success;
     char infoLog[512];
     //Crear el vertex y fragment shader
@@ -14,6 +14,11 @@ void Shader::load(const char* vertexShaderFilename,const char* fragmentShaderFil
 
     glAttachShader(programId,vertexShader); //Se unen los dos shaders al programa
     glAttachShader(programId,fragmentShader);
+    if(geometryShaderFilename != nullptr){
+        unsigned int geometryShader;
+        geometryShader = compileShader(geometryShaderFilename,GL_GEOMETRY_SHADER);
+        glAttachShader(programId,geometryShader);
+    }
     glLinkProgram(programId); //Se linkea el shader program
 
     glGetProgramiv(programId,GL_LINK_STATUS,&success);
@@ -33,6 +38,10 @@ void Shader::activate(){
 
 void Shader::setInt(const char*name,int val){
     glUniform1i(glGetUniformLocation(programId,name),val);
+}
+
+void Shader::setFloat(const char*name,float val){
+    glUniform1f(glGetUniformLocation(programId,name),val);
 }
 
 void Shader::setFloat3(const char* name,float f1,float f2,float f3){

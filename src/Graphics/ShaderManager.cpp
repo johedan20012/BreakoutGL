@@ -8,6 +8,13 @@ void ShaderManager::loadShader(const char* vertexShaderFilename,const char* frag
     shaders[name].load(vertexShaderFilename,fragmentShaderFilename);
 }
 
+void ShaderManager::loadShader(const char* vertexShaderFilename,const char* fragmentShaderFilename,const char* geometryShaderFilename,std::string name){
+    if(shaders.count(name) > 0) return;
+
+    shaders[name].load(vertexShaderFilename,fragmentShaderFilename,geometryShaderFilename);
+}
+
+
 Shader& ShaderManager::getShader(std::string name){
     return shaders[name];
 }

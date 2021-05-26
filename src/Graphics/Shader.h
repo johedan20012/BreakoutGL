@@ -19,11 +19,12 @@ class Shader{
     public:
         Shader() = default;
 
-        void load(const char* vertexShaderFilename,const char* fragmentShaderFilename);
+        void load(const char* vertexShaderFilename,const char* fragmentShaderFilename,const char* geometryShaderFilename = nullptr);
 
         void activate(); 
 
         void setInt(const char*name,int val);
+        void setFloat(const char* name,float val);
         void setFloat3(const char* name,float f1,float f2,float f3);
         void setFloat3(const char* name,glm::vec3 vec);
         void setFloat4(const char* name,float f1,float f2,float f3,float f4);

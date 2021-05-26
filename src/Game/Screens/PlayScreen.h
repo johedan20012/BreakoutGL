@@ -24,8 +24,6 @@ class PlayScreen : public Screen{
 
     bool infinite;
 
-    Texture2D background;
-
     Texture2D pauseBackground;
     Button pauseButtons[2];
 

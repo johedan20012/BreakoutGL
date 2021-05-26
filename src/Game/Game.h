@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <time.h>       
 
+#include "Terrain.h"
+#include "Camera.h"
+
 #include "Screens/PlayScreen.h"
 #include "Screens/StartScreen.h"
 
@@ -34,6 +37,10 @@ class Game{
         Screen* screen = nullptr;
 
         GLFWwindow* window = nullptr;
+
+        Camera camera;
+
+        Terrain terrain;
     public:
         Game() = default;
 
@@ -43,6 +50,8 @@ class Game{
 
         void cleanup();
     private:
+        void render();
+
         static void framebufferSizeCallback(GLFWwindow* window,int witdh, int height);
 };
 

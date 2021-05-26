@@ -11,7 +11,6 @@ void StartScreen::init(){
     shader = ShaderManager::getShader("shader");
 
     nombre = SpriteManager::getSprite("INICIO_nombre");
-    fondo = SpriteManager::getSprite("background");
 }
 
 void StartScreen::update(float deltaTime){
@@ -30,7 +29,6 @@ void StartScreen::update(float deltaTime){
 }
 
 void StartScreen::render(){
-    SpriteRenderer::drawSprite(fondo,shader,glm::vec2(0.0f,0.0f),glm::vec2(800.0f,600.0f),0,glm::vec4(1.0f));
     SpriteRenderer::drawSprite(nombre,shader,glm::vec2(150.0f,150.0f),glm::vec2(500.0f,100.0f),0,glm::vec4(1.0f));
 
     Shader textShader = ShaderManager::getShader("textShader");

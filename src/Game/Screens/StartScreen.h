@@ -14,7 +14,7 @@
 
 class StartScreen : public Screen{
     private:
-        Texture2D nombre,fondo;
+        Texture2D nombre;
         Shader shader;
         TextFont fuente;
 

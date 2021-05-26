@@ -77,38 +77,16 @@ void Level::load(unsigned int noRows,unsigned int noColumns,unsigned int levelWi
         for(unsigned int i = 0; i<noRows; i++){
             std::vector<unsigned int> row;
             for(int j=0; j<noColumns; j++){
-                float x = factorX * j;
-                float y = factorY * i;
-                float sum = 0.0f;
-                float freq = a;
-                float scale = b;
+            
 
-                for( int oct = 0; oct < 4; oct++ ) {
-                    glm::vec2 p(x * freq, y * freq);
-                    float val = noise.GetNoise(p.x,p.y) / scale;
-                    sum += val;
-                    
-                    
-                    freq *= 2.0f; 
-                    scale *= b; 
-                }
-
-                float result = (sum + 1.0f)/ 2.0f;
+                float result = noise.GetNoise((float)i*128.0f,(float)j*128.0f);
+                result = (result+1.0f)/2.0f;
                 result = result*6-1;
                 int code = (int)result; 
 
                 if(code > 5) code = 5;
                 if(code < 0) code = 0;
                 row.push_back(code);
-                /*
-                glm::vec2 p (x*freq,y*freq);
-                float result = (noise.GetNoise(p.x,p.y) +1.0f)/2.0f; //result \in [0,1]
-                result = result*10-4;
-                int code = (int)result; 
-
-                if(code > 5) code = 5;
-                if(code < 0) code = 0;
-                row.push_back(code);*/
             }
             tileData.push_back(row);
         }
@@ -203,7 +181,6 @@ void Level::update(float deltaTime){
     if(balls.size() == 0){
         player->loseLive();
         if(!player->gameover()){
-            //ball->reset(364.0f);
             glm::vec2 ballPosition = player->getPosition()+glm::vec2(player->getSize().x/2.0f - 12.5f,-25.0f);
             balls.push_back(new Ball(ballPosition,364.0f,SpriteManager::getSprite("ball")));
         }
@@ -334,7 +311,6 @@ void Level::splitBalls(){
         glm::vec3 newBall1Dir = glm::rotate(glm::vec3(ballDir,0.0f),glm::radians(25.0f),glm::vec3(0.0f,0.0f,1.0f));
         balls.push_back(new Ball(balls[i]->getPosition(),364.0f,SpriteManager::getSprite("ball")));
         balls[balls.size()-1]->setStuck(false);
-        std::cout <<newBall1Dir.x<<" "<<newBall1Dir.y<<" "<<newBall1Dir.z<<"\n";
         balls[balls.size()-1]->setVelocity(newBall1Dir);
     }
 }

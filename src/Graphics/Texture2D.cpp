@@ -28,12 +28,14 @@ void Texture2D::loadFile(const char* filename,bool flip){
     glBindTexture(GL_TEXTURE_2D,textureId);
 
     //Especifica la forma en que se trata una coordenada de textura fuera del rango [0,1] por eje, en este caso es para una textura 2D
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_MIRRORED_REPEAT); 
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_MIRRORED_REPEAT); 
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT); 
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT); 
 
     //Especifica el filtro de textura, para "min" cuando se "reduce" la textura y "mag" al contrario
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT , 16); ///Permite que se vea bien prron todo XD
     //?Los 4 comandos de arriba solo afectan a la textura "actual"
 
     if (data){

@@ -16,11 +16,9 @@ void PlayScreen::init(){
     Brick::setPlayer(&player);
 
     loadNextLevel();
-
-    background = SpriteManager::getSprite("background");
     pauseBackground = SpriteManager::getSprite("pauseBackground");
 
-    pauseButtons[0] = Button("Reaudar",fuente,glm::vec2(200,300));
+    pauseButtons[0] = Button("Reanudar",fuente,glm::vec2(200,300));
     pauseButtons[1] = Button("Salir a la pantalla principal",fuente,glm::vec2(200,350));
 }
 
@@ -63,7 +61,6 @@ void PlayScreen::update(float deltaTime){
 
 void PlayScreen::render(){
     Shader& shader = ShaderManager::getShader("shader");
-    SpriteRenderer::drawSprite(background,shader,glm::vec2(0.0f,0.0f),glm::vec2(800.0f,600.0f),0,glm::vec4(1.0f));
     level->render(shader);
 
     //Renderizar los puntos y vidas del jugador
@@ -110,7 +107,7 @@ void PlayScreen::loadNextLevel(){
     numLevel++;
     level = new Level();
     if(infinite){
-        level->load(20,20,800,400,fuente,false);
+        level->load(20,20,800,400,fuente,true);
     }else{
         std::stringstream ss;
         ss<<numLevel;
