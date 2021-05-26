@@ -105,5 +105,6 @@ void Skybox::render(Shader& shader){
 }
 
 void Skybox::cleanup(){
-
+    VAO.cleanup();
+    glDeleteTextures(1,&cubemapTexture);
 }

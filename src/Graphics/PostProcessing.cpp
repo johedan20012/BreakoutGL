@@ -153,4 +153,6 @@ void PostProcessing::cleanup(){
 
     glDeleteFramebuffers(2,pingPongFramebuffers);
     glDeleteTextures(2,pingPongColorBuffers);
+
+    QuadVAO.cleanup();
 }
