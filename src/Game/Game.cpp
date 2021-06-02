@@ -1,7 +1,5 @@
 #include "Game.h"
 
-#include "Skybox.h"
-
 #include "../Graphics/PostProcessing.h"
 
 int Game::screenWidth = 800.0f;
@@ -53,7 +51,9 @@ int Game::init(){
 
     // =================== Texturas ==============================
     SpriteManager::loadSprite("assets/textures/logoInicio.png","INICIO_nombre",false);
-    
+    SpriteManager::loadSprite("assets/textures/fondoFront.png","fondo");
+    SpriteManager::loadSprite("assets/textures/sun.png","sun");
+    SpriteManager::loadSprite("assets/textures/sunBright.png","sunBright");
     SpriteManager::loadSprite("assets/textures/block_solid.png","block_solid",false);
     SpriteManager::loadSprite("assets/textures/block.png","block",false);
     SpriteManager::loadSprite("assets/textures/fondoPausa.png","pauseBackground",false);
@@ -96,9 +96,6 @@ int Game::init(){
     //====================================== Camara ===================================
     camera = Camera(glm::vec3(25.0f,1.0f,0.0f),90.0f,10.0f,45.0f);
 
-    //====================================== Skybox ===================================
-    Skybox::load();
-
     //====================================== PostProcessing ============================
     PostProcessing::init();
 
@@ -116,7 +113,9 @@ int Game::init(){
 
     Shader& shader3D = ShaderManager::getShader("shader3D");
     shader3D.activate();
-    shader3D.setInt("skybox",0);
+    shader3D.setInt("image",0);
+    shader3D.setInt("brightMap",1);
+    shader3D.setFloatMat4("model",glm::mat4(1.0f));
     shader3D.setFloatMat4("view",camera.getViewMatriz());
     shader3D.setFloatMat4("projection",glm::perspective(glm::radians(camera.getFov()), 800.0f / 600.0f, 0.1f, 100.0f));
 
@@ -235,8 +234,6 @@ void Game::cleanup(){
 
     fuente.cleanup();
 
-    Skybox::cleanup();
-
     PostProcessing::cleanup();
 
     PhysicsManager::cleanup();
@@ -258,12 +255,17 @@ void Game::render(){
     //El renderizado del terreno y la skybox sera en el buffer para el postProcessing
     PostProcessing::bindFramebuffer();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            
-        Shader& shader3D = ShaderManager::getShader("shader3D");
+
+        Shader& shader3D  = ShaderManager::getShader("shader3D");
         shader3D.activate();
         shader3D.setFloatMat4("view",glm::mat4(glm::mat3(camera.getViewMatriz())));
-        Skybox::render(shader3D);
-
+        glActiveTexture(GL_TEXTURE1);
+        SpriteManager::getSprite("fondo").bind();
+        SpriteRenderer::drawSprite3D(SpriteManager::getSprite("fondo"),shader3D,glm::vec3(-1.0f,-1.0f,1.0f),glm::vec3(2.0f,2.0f,0.0f));
+        
+        glActiveTexture(GL_TEXTURE1);
+        SpriteManager::getSprite("sunBright").bind();
+        SpriteRenderer::drawSprite3D(SpriteManager::getSprite("sun"),shader3D,glm::vec3(-0.25f,0.0f,0.8f),glm::vec3(0.5f,0.5f,0.0f));
         glEnable(GL_DEPTH_TEST);
             glActiveTexture(GL_TEXTURE0);
             SpriteManager::getSprite("grid").bind();

@@ -48,6 +48,29 @@ void SpriteRenderer::drawSprite(Texture2D& texture,Shader& shader,glm::vec2 pos,
     VAO.unbind();
 }
 
+void SpriteRenderer::drawSprite3D(Texture2D& texture,Shader& shader, glm::vec3 pos,glm::vec3 size,float rotate,glm::vec3 rotationVector , glm::vec4 color){
+     shader.activate();
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, pos);
+
+    model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.5f * size.z)); //Esto traslada el centro del objeto a la mitad del mismo, asi el objeto rota sobre su propio centro
+    model = glm::rotate(model, glm::radians(rotate), glm::normalize(rotationVector)); 
+    model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, -0.5f * size.z)); //Devuelve todo a como estaba
+
+    model = glm::scale(model, size); 
+
+    shader.setFloatMat4("model",model);
+    shader.setFloat4("spriteColor",color);
+
+    glActiveTexture(GL_TEXTURE0);
+    texture.bind();
+
+    VAO.bind();
+    glDrawArrays(GL_TRIANGLES,0,6);
+    VAO.unbind();
+}
+
 void SpriteRenderer::cleanup(){
     VAO.cleanup();
 }
