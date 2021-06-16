@@ -5,7 +5,13 @@
 
 #include <glm/gtc/noise.hpp>
 
-void Terrain::generate(int NOColumns,int NORows){
+#define MAX_POINTS 10101
+
+void Terrain::init(){
+    NOIndices = 0;
+}
+
+void Terrain::generate(int NOColumns,int NORows,int offset){
     if(NOColumns <= 0 || NORows <= 0) return;
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
@@ -16,7 +22,10 @@ void Terrain::generate(int NOColumns,int NORows){
 
     FastNoiseLite noise;
     noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    noise.SetSeed((int)time(NULL));
+    if(NOIndices == 0){
+        seed = (int)time(NULL);
+    }
+    noise.SetSeed(seed);
 
         float factorX = 1.0f / NOColumns;
         float factorY = 1.0f / NORows;
@@ -29,7 +38,7 @@ void Terrain::generate(int NOColumns,int NORows){
             float x = unitWidth * i;
             float z = unitHeight * j;
 
-            float result2 = noise.GetNoise((float)i*16.0f,(float)j*16.0f);
+            float result2 = noise.GetNoise((float)(i*16.0f+offset),(float)j*16.0f);
             result2 = (result2+1.0f)/2.0f;
             float y = result2*0.15;
             if(z < 0.7 && z >= 0.5){
@@ -59,24 +68,36 @@ void Terrain::generate(int NOColumns,int NORows){
         }
     }
 
-    NOIndices = indices.size();
+    if(NOIndices == 0){
+        NOIndices = indices.size();
 
-    VAO.generate();
-    VAO.bind();
-        VAO["EBO"] = BufferObject(GL_ELEMENT_ARRAY_BUFFER);
-        VAO["EBO"].generate();
+        VAO.generate();
+        VAO.bind();
+            VAO["EBO"] = BufferObject(GL_ELEMENT_ARRAY_BUFFER);
+            VAO["EBO"].generate();
+            VAO["EBO"].bind();
+            VAO["EBO"].setData<GLuint>(indices.size(),&indices[0],GL_DYNAMIC_DRAW);
+
+            VAO["VBO"] = BufferObject(GL_ARRAY_BUFFER);
+            VAO["VBO"].generate();
+            VAO["VBO"].bind();
+            VAO["VBO"].setData<GLfloat>(vertices.size(),&vertices[0],GL_DYNAMIC_DRAW);
+            VAO["VBO"].setVertexAttribPointer<GLfloat>(0,3,GL_FLOAT,3,0);
+        VAO.unbind();
+    }else{
+    
         VAO["EBO"].bind();
-        VAO["EBO"].setData<GLuint>(indices.size(),&indices[0],GL_STATIC_DRAW);
+        VAO["EBO"].updateData<GLuint>(0, indices.size(), &indices[0]);
 
-        VAO["VBO"] = BufferObject(GL_ARRAY_BUFFER);
-        VAO["VBO"].generate();
         VAO["VBO"].bind();
-        VAO["VBO"].setData<GLfloat>(vertices.size(),&vertices[0],GL_STATIC_DRAW);
-        VAO["VBO"].setVertexAttribPointer<GLfloat>(0,3,GL_FLOAT,3,0);
-    VAO.unbind();
+        VAO["VBO"].updateData<GLfloat>(0, vertices.size(), &vertices[0]);
+    }
+    
 }
 
 void Terrain::render(Shader& shader){
+    if(NOIndices <= 0 ){ std::cout<<"LOL"; return;}
+
     shader.activate();
     VAO.bind();
     glDrawElements(GL_TRIANGLES,NOIndices,GL_UNSIGNED_INT,0);

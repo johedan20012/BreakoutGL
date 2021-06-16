@@ -67,7 +67,7 @@ void Brick::hit(PhysicsEntity* otherEntity){
     if(resistance > 0) return;
 
     if(otherEntity->getType() == EntityType::BALL){
-        if(rand()%2){
+        if(rand()%6 == 0){
             spawnModifier = true;
         }
         if(static_cast<Ball*>(otherEntity)->hasFire()){

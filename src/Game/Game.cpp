@@ -78,8 +78,8 @@ int Game::init(){
     SpriteManager::loadSprite("assets/textures/particleFire.png","fireParticle",false);
     SpriteManager::loadSprite("assets/textures/laser.png","laser",false);
 
-    SpriteManager::loadSprite("assets/textures/debug/circleCollider.png","DEBUG_1",false);
-    SpriteManager::loadSprite("assets/textures/debug/boxCollider.png","DEBUG_2",false);
+    //SpriteManager::loadSprite("assets/textures/debug/circleCollider.png","DEBUG_1",false);
+    //SpriteManager::loadSprite("assets/textures/debug/boxCollider.png","DEBUG_2",false);
 
     SpriteManager::loadSprite("assets/textures/grid.png","grid",false);
     SpriteManager::loadSprite("assets/textures/gridBright.png","gridBright",false);
@@ -131,7 +131,8 @@ int Game::init(){
     shaderTerrain.setFloat3("tileCount",glm::vec3(100.0f,100.0f,0.0f));
     shaderTerrain.setFloat("ambientStrength",1.0f);
 
-    terrain.generate(100,100);
+    terrain.init();
+    terrain.generate(100,100,0);
 
     screen = new StartScreen(fuente);
     screen->init();
@@ -142,42 +143,16 @@ int Game::init(){
 void Game::run(){ 
     float lastX = Mouse::getMouseX(),lastY = Mouse::getMouseY(),frame = 1;
 
-    bool cameraLock = true;
+    float timer = 0;
+
     while(!glfwWindowShouldClose(window)){ /*Corre mientras no se le diga a GLFW que debe cerrar */
         //Calcular el deltaTime
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        float sensitivity = 0.1f;
-        if(!cameraLock){
-            camera.setYaw(camera.getYaw()+(Mouse::getMouseX()-lastX)*sensitivity);
-            camera.setPitch(camera.getPitch() + (lastY-Mouse::getMouseY())*sensitivity);
-        }
-
-        lastX = Mouse::getMouseX();
-        lastY = Mouse::getMouseY();
-
-        float cameraSpeed = 10.0f*deltaTime;
-
-        glm::vec3 cameraPos = camera.getPosition();
-        glm::vec3 cameraFront = camera.getFront();
-        glm::vec3 cameraUp = camera.getUp();
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            cameraPos += cameraSpeed * cameraFront;
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            cameraPos -= cameraSpeed * cameraFront;
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        camera.setPosition(cameraPos);
-
-        glm::mat4 view = camera.getViewMatriz();
-
-        if(Keyboard::keyWentDown(GLFW_KEY_H) == GLFW_PRESS){
-            cameraLock = !cameraLock;
-        }
+        timer+= deltaTime;
+        terrain.generate(100,100,timer*15);
 
         //Update
         screen->update(deltaTime);

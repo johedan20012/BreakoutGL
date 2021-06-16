@@ -40,6 +40,11 @@ class BufferObject{
         }
 
         template<typename T>
+		void updateData(GLintptr offset, GLuint noElements, T*data) {
+			glBufferSubData(type, offset, noElements * sizeof(T), data);
+		}
+
+        template<typename T>
         void setSubData(GLuint noElements,GLint offset,T* data){
             glBufferSubData(type,offset,sizeof(T)*noElements,data);
         }

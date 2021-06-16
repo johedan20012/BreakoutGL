@@ -27,7 +27,8 @@ void PlayScreen::update(float deltaTime){
         if(Mouse::buttonWentDown(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS){
             state = ScreenState::FINISHED;
         }
-    };
+        return;
+    }
     mouseState = 0;
 
     handleInput();
@@ -96,11 +97,6 @@ void PlayScreen::handleInput(){
             mouseState = 2;
         }
     }
-
-    if(Keyboard::keyWentDown(GLFW_KEY_R) == GLFW_PRESS){
-        delete level;
-        loadNextLevel();
-    }
 }
 
 void PlayScreen::loadNextLevel(){
@@ -109,6 +105,10 @@ void PlayScreen::loadNextLevel(){
     if(infinite){
         level->load(20,20,800,400,fuente,true);
     }else{
+        if(numLevel > 13){
+            playState = PlayState::GAMEOVER;
+            return;
+        }
         std::stringstream ss;
         ss<<numLevel;
         std::string levelPath = "assets/levels/level"+ss.str()+".txt";

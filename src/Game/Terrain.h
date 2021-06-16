@@ -12,10 +12,14 @@ class Terrain{
 
         unsigned int NOIndices;
 
+        int seed;
+
     public:
         Terrain() = default;
 
-        void generate(int NOColumns,int NORows);
+        void init();
+
+        void generate(int NOColumns,int NORows,int offset);
 
         void render(Shader& shader);
 

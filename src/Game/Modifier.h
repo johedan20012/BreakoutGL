@@ -19,7 +19,6 @@ enum class ModifierType{
     REMOVE_BALL,
     EXTRA_LIFE,
     NEXT_LEVEL,
-    CRAZY_TIME, //FIXME
     //=========================
     NUM_TYPES
 };
